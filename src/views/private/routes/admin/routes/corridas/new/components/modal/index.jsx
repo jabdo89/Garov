@@ -82,7 +82,7 @@ const GuiaModal = ({
             {guias &&
               guias.map((data) => (
                 <Option key={data.id} value={data.id} label={data.deliveryNum}>
-                  {data.numGuia}
+                  {data.delivery}
                 </Option>
               ))}
           </Select>
@@ -129,7 +129,10 @@ export default compose(
       },
       {
         collection: "Guias",
-        where: [["estatus", "==", "Documentado"]],
+        where: [
+          ["estatus", "==", "Documentado"],
+          ["adminID", "==", props.profile.userID],
+        ],
       },
     ];
   })

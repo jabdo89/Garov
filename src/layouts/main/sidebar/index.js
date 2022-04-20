@@ -46,43 +46,43 @@ const Sidebar = ({ history, collapsed, onCollapse, profile }) => {
         <Item icon={<UsergroupAddOutlined />} key="operadores/all">
           <Link to="/operadores/all">Operadores</Link>
         </Item>
-        <Item icon={<FileSearchOutlined />} key="evidencias/all">
-          <Link to="/evidencias/all">Evidencias</Link>
+        <Item icon={<FileSearchOutlined />} key="evidencias">
+          <Link to="/evidencias">Evidencias</Link>
         </Item>
         <SubMenu icon={<UserOutlined />} title="Catalogos">
           <Item icon={<UserAddOutlined />} key="catalogos/clientes/all">
             <Link to="/catalogos/clientes/all">Clientes</Link>
           </Item>
-          <Item icon={<UserAddOutlined />} key="operadores/new">
-            <Link to="/operadores/new">Paquetes</Link>
+          <Item icon={<UserAddOutlined />} key="/catalogos/paquetes/all">
+            <Link to="/catalogos/paquetes/all">Paquetes</Link>
           </Item>
-          <Item icon={<UserAddOutlined />} key="operadores/new">
-            <Link to="/operadores/new">Plantas</Link>
+          <Item icon={<UserAddOutlined />} key="plantas/new">
+            <Link to="/catalogos/plantas/all">Plantas</Link>
           </Item>
-          <Item icon={<UserAddOutlined />} key="operadores/new">
-            <Link to="/operadores/new">Sucursales</Link>
+          <Item icon={<UserAddOutlined />} key="/catalogos/sucursales/all">
+            <Link to="/catalogos/sucursales/all">Sucursales</Link>
           </Item>
-          <Item icon={<UserAddOutlined />} key="operadores/new">
-            <Link to="/operadores/new">Tipo Guias</Link>
+          <Item icon={<UserAddOutlined />} key="/catalogos/guias/all">
+            <Link to="/catalogos/guias/all">Tipo Guias</Link>
           </Item>
-          <Item icon={<UserAddOutlined />} key="operadores/new">
+          <Item icon={<UserAddOutlined />} key="/catalogos/servicios/all">
             <Link to="/catalogos/servicios/all">Tipo Servicios</Link>
           </Item>
-          <Item icon={<UserAddOutlined />} key="catalogo/unidades/new">
+          <Item icon={<UserAddOutlined />} key="catalogos/unidades/all">
             <Link to="/catalogos/unidades/all">Tipo Unidades</Link>
           </Item>
         </SubMenu>
       </>
     );
   }
-  if (profile.rol === "User") {
+  if (profile.rol === "Super") {
     routes = (
       <>
         <Item icon={<UnorderedListOutlined />} key="guias/all">
           <Link to="/guias/all">Guias</Link>
         </Item>
-        <Item icon={<FileSearchOutlined />} key="evidencias">
-          <Link to="/evidencias">Evidencias</Link>
+        <Item icon={<FileSearchOutlined />} key="admins/all">
+          <Link to="/admins/all">Admins</Link>
         </Item>
       </>
     );
@@ -92,6 +92,9 @@ const Sidebar = ({ history, collapsed, onCollapse, profile }) => {
       <>
         <Item icon={<UnorderedListOutlined />} key="guias/all">
           <Link to="/guias/all">Guias</Link>
+        </Item>
+        <Item icon={<UnorderedListOutlined />} key="guias/new">
+          <Link to="/guias/new">Crear Guia</Link>
         </Item>
       </>
     );

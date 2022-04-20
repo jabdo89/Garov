@@ -38,6 +38,12 @@ const CorridasNew = Loadable({
   loading: TopBarProgress,
 });
 
+/* webpackChunkName: "Documentar Guias" */
+const Evidencias = Loadable({
+  loader: () => import("./routes/evidencias"),
+  loading: TopBarProgress,
+});
+
 // Catalogos
 const ClientesAll = Loadable({
   loader: () => import("./routes/catalogos/clientes/all"),
@@ -69,6 +75,46 @@ const ServiciosNew = Loadable({
   loading: TopBarProgress,
 });
 
+const PlantasAll = Loadable({
+  loader: () => import("./routes/catalogos/plantas/all"),
+  loading: TopBarProgress,
+});
+
+const PlantasNew = Loadable({
+  loader: () => import("./routes/catalogos/plantas/new"),
+  loading: TopBarProgress,
+});
+
+const PaquetesAll = Loadable({
+  loader: () => import("./routes/catalogos/paquetes/all"),
+  loading: TopBarProgress,
+});
+
+const PaquetesNew = Loadable({
+  loader: () => import("./routes/catalogos/paquetes/new"),
+  loading: TopBarProgress,
+});
+
+const SucursalesAll = Loadable({
+  loader: () => import("./routes/catalogos/sucursales/all"),
+  loading: TopBarProgress,
+});
+
+const SucursalesNew = Loadable({
+  loader: () => import("./routes/catalogos/sucursales/new"),
+  loading: TopBarProgress,
+});
+
+const TipoGuiasAll = Loadable({
+  loader: () => import("./routes/catalogos/tipo-guias/all"),
+  loading: TopBarProgress,
+});
+
+const TipoGuiasNew = Loadable({
+  loader: () => import("./routes/catalogos/tipo-guias/new"),
+  loading: TopBarProgress,
+});
+
 const Dash = () => (
   <Switch>
     <Route path="/guias">
@@ -89,6 +135,9 @@ const Dash = () => (
     <Route path="/documentar">
       <DocumentarGuias />
     </Route>
+    <Route path="/evidencias">
+      <Evidencias />
+    </Route>
 
     <Route path="/catalogos/clientes/all">
       <ClientesAll />
@@ -107,6 +156,30 @@ const Dash = () => (
     </Route>
     <Route path="/catalogos/servicios/new">
       <ServiciosNew />
+    </Route>
+    <Route path="/catalogos/plantas/all">
+      <PlantasAll />
+    </Route>
+    <Route path="/catalogos/plantas/new">
+      <PlantasNew />
+    </Route>
+    <Route path="/catalogos/paquetes/all">
+      <PaquetesAll />
+    </Route>
+    <Route path="/catalogos/paquetes/new">
+      <PaquetesNew />
+    </Route>
+    <Route path="/catalogos/sucursales/all">
+      <SucursalesAll />
+    </Route>
+    <Route path="/catalogos/sucursales/new">
+      <SucursalesNew />
+    </Route>
+    <Route path="/catalogos/guias/all">
+      <TipoGuiasAll />
+    </Route>
+    <Route path="/catalogos/guias/new">
+      <TipoGuiasNew />
     </Route>
     <Redirect to="/guias" />
   </Switch>

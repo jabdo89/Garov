@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "antd";
 import shortid from "shortid";
-import GuiasModal from "./components/modal";
+import firebase from "firebase";
 import { HomeOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -27,8 +27,26 @@ const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
 const NewGuia = ({ history, profile }) => {
-  const onFinish = (values) => {};
+  const onFinish = (values) => {
+    const data = values;
 
+    const db = firebase.firestore();
+    const id = shortid.generate();
+
+    db.collection("Sucursales")
+      .doc(id)
+      .set({
+        ...data,
+        id,
+        adminID: profile.userID,
+      })
+      .then(() => {
+        history.push("/catalogos/sucursales/all");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
   return (
     <>
       <Container>
@@ -39,31 +57,54 @@ const NewGuia = ({ history, profile }) => {
             </Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <Link to="/corridas/all">
+            <Link to="/catalogos/sucursales/all">
               <UserOutlined />
-              <span style={{ marginLeft: 5 }}>Corridas</span>
+              <span style={{ marginLeft: 5 }}>Sucursales</span>
             </Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Crear Corrida</Breadcrumb.Item>
+          <Breadcrumb.Item>Crear Sucursal</Breadcrumb.Item>
         </Breadcrumb>
         <Card>
-          <Title level={4}>Añade los datos de la nueva Corrida</Title>
+          <Title level={4}>Añade los datos de la nueva Sucursal</Title>
           <Form layout="vertical" onFinish={onFinish}>
             <Divider
               style={{ borderTop: "grey" }}
               orientation="right"
             ></Divider>
             <Col>
-              <Item
-                label={<Text strong>Tipo de Corrida</Text>}
-                name="tipo"
-                style={{ width: "100%" }}
-              >
-                <Radio.Group defaultValue="a" buttonStyle="solid">
-                  <Radio.Button value="a">Corrida a Cliente</Radio.Button>
-                  <Radio.Button value="b">Corrida a Bodega</Radio.Button>
-                </Radio.Group>
-              </Item>
+              <Row>
+                <Item
+                  label={<Text strong>Nombre de Sucursal</Text>}
+                  name="sucursal"
+                  style={{ width: "30%" }}
+                  rules={[
+                    { required: true, message: "Ingresa nombre de Sucursal" },
+                  ]}
+                >
+                  <Input placeholder="Sucursal" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Ship Branch</Text>}
+                  name="shipBranch"
+                  style={{ width: "30%" }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Ingresa nombre de Ship Branch",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Ship Branch" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Codigo Postal</Text>}
+                  name="codigoPostal"
+                  style={{ width: "30%" }}
+                  rules={[{ required: true, message: "Ingresa Codigo Postal" }]}
+                >
+                  <Input placeholder="Codigo Postal" size="large" />
+                </Item>
+              </Row>
             </Col>
             <Item style={{ display: "block", width: "100%", marginTop: 20 }}>
               <Button

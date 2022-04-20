@@ -33,7 +33,7 @@ const Corridas = ({ corridas, operadores, guias }) => {
       title: "Operador",
       dataIndex: "operador",
       key: "operador",
-      render: (id) => operadores[id].nombre,
+      render: (id) => operadores[id]?.nombre,
     },
     {
       title: "Cant Guias",
@@ -47,29 +47,37 @@ const Corridas = ({ corridas, operadores, guias }) => {
       dataIndex: "guias",
       render: (guiasList) => {
         let counter = 0;
+
         for (let i = 0; i < guiasList.length; i++) {
-          counter += guias[guiasList[i]].paquetes.length;
+          counter += guias[guiasList[i]]?.paquetes?.length;
         }
         return counter;
       },
     },
   ];
 
-  function checkSearch(company) {
-    return company.company.toUpperCase() === search.toUpperCase();
-  }
-
   if (!corridas) {
     return null;
+  }
+  let corridasFiltered = corridas;
+
+  if (search !== "") {
+    corridasFiltered = corridasFiltered.filter((corrida) => {
+      return corrida.numCorrida.includes(search);
+    });
   }
 
   return (
     <Container>
       <Table
         title={() => (
-          <Title search={search} setSearch={setSearch} data={corridas} />
+          <Title
+            search={search}
+            setSearch={setSearch}
+            data={corridasFiltered}
+          />
         )}
-        dataSource={corridas.map((service) => ({
+        dataSource={corridasFiltered.map((service) => ({
           key: service.id,
           ...service,
         }))}
@@ -96,6 +104,7 @@ export default compose(
     return [
       {
         collection: "Corridas",
+        where: [["adminID", "==", props.profile.userID]],
       },
       {
         collection: "Operadores",

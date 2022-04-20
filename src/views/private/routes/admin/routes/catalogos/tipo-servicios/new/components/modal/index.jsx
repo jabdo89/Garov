@@ -144,6 +144,7 @@ export default compose(
     return [
       {
         collection: "Unidades",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   })

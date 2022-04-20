@@ -6,7 +6,7 @@ import MainLayout from "../../layouts/main";
 import AuthLayout from "../../layouts/auth";
 import Authentication from "./routes/authentification";
 import Admin from "./routes/admin";
-import User from "./routes/user";
+import Garov from "./routes/garov";
 import Company from "./routes/company";
 
 function AuthIsLoaded() {
@@ -40,10 +40,10 @@ const Private = ({ profile, location }) => {
       </Layout>
     );
   }
-  if (profile.rol === "User") {
+  if (profile.rol === "Super") {
     return (
       <Layout>
-        <User />
+        <Garov />
       </Layout>
     );
   }

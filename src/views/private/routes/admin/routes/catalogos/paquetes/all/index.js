@@ -8,65 +8,24 @@ import { Table, Tag, Tooltip, Button } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 
-const Corridas = ({ corridas }) => {
+const Paquetes = ({ paquetes }) => {
   const columns = [
     {
-      title: "Estatus",
-      key: "estatus",
-      dataIndex: "estatus",
-      render: (deliveries) => (
-        <Tag color="green" key={shortid.generate()}>
-          {deliveries}
-        </Tag>
-      ),
-    },
-    {
-      title: "# Guia",
-      dataIndex: "numGuia",
-      key: "numGuia",
-    },
-    {
-      title: "# Orden",
-      dataIndex: "numOrden",
-      key: "numOrden",
-    },
-    {
-      title: "Tipo de Envio",
-      key: "tipoEnvio",
-      dataIndex: "tipoEnvio",
-    },
-    {
-      title: "Cliente",
-      key: "cliente",
-      dataIndex: "cliente",
-    },
-    {
-      title: "Evidencia",
-      dataIndex: "evidence",
-      key: "evidence",
-      // eslint-disable-next-line react/prop-types
-      render: (photo) => (
-        <Tooltip title="Evidencia">
-          <Button
-            shape="circle"
-            onClick={() => window.open(photo)}
-            icon={<FileImageOutlined />}
-            disabled={!photo}
-          />
-        </Tooltip>
-      ),
+      title: "Paquete",
+      key: "paquete",
+      dataIndex: "paquete",
     },
   ];
 
-  if (!corridas) {
+  if (!paquetes) {
     return null;
   }
 
   return (
     <Container>
       <Table
-        title={() => <Title data={corridas} />}
-        dataSource={corridas.map((service) => ({
+        title={() => <Title data={paquetes} />}
+        dataSource={paquetes.map((service) => ({
           key: service.id,
           ...service,
         }))}
@@ -78,7 +37,7 @@ const Corridas = ({ corridas }) => {
 
 const mapStateToProps = (state) => {
   return {
-    corridas: state.firestore.ordered.Corridas,
+    paquetes: state.firestore.ordered.Paquetes,
     profile: state.firebase.profile,
   };
 };
@@ -90,8 +49,9 @@ export default compose(
 
     return [
       {
-        collection: "Corridas",
+        collection: "Paquetes",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   })
-)(Corridas);
+)(Paquetes);

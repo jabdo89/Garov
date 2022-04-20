@@ -18,7 +18,7 @@ const TableTitle = ({ search, setSearch, data }) => {
         style={{ width: 250, margin: "auto 10px auto auto" }}
         allowClear
         value={search}
-        placeholder="Buscar Guia"
+        placeholder="Buscar Corrida"
         onChange={({ target: { value } }) => setSearch(value)}
       />
       <Link to="/corridas/new">

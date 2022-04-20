@@ -27,7 +27,7 @@ const { Item } = Form;
 const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
-const NewOperador = ({ history }) => {
+const NewOperador = ({ history, profile }) => {
   const onFinish = (values) => {
     const secondAuth = firebase.initializeApp(secondConfig, "Secondary");
     const db = firebase.firestore();
@@ -48,6 +48,7 @@ const NewOperador = ({ history }) => {
             afectadoComisiones: values.afectadoComisiones,
             compensacion: values.compensacion,
             email: values.email,
+            adminID: profile.userID,
           })
           .then(() => {
             secondAuth.delete();

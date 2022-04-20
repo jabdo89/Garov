@@ -36,7 +36,7 @@ const TableTitle = ({ search, setSearch, setStatus, setDateRange, data }) => {
           >
             <Option key={"Creado"}>Creado</Option>
             <Option key={"Modificando"}>Modificando</Option>
-            <Option key={"Entregando"}>Entregando</Option>
+            <Option key={"En Corrida"}>En Corrida</Option>
             <Option key={"Entregado"}>Entregado</Option>
           </Select>
           <RangePicker
@@ -50,7 +50,7 @@ const TableTitle = ({ search, setSearch, setStatus, setDateRange, data }) => {
             style={{ width: 250, marginRight: 10 }}
             allowClear
             value={search}
-            placeholder="Buscar Guia"
+            placeholder="Buscar Delivery #"
             onChange={({ target: { value } }) => setSearch(value)}
           />
           <ExcelExport fileExport={ExcelFormater} data={data} />

@@ -28,6 +28,10 @@ const AdminForm = ({
   editingLocation,
   setEditingLocation,
   users,
+  unidades,
+  servicios,
+  paquetes,
+  plantas,
 }) => {
   const [step, setStep] = useState(0);
   // Form Info
@@ -54,6 +58,8 @@ const AdminForm = ({
       .doc(editingLocation.id)
       .update({ estatus: "Documentado", ...inputsModified, paquetes: packages })
       .then(async () => {
+        setPackages([]);
+        setStep(0);
         setShowModal(false);
       });
   };
@@ -169,10 +175,10 @@ const AdminForm = ({
                   })
                 }
               >
-                {users &&
-                  users.map((data) => (
-                    <Option key={data.id} value={data.email} label={data.email}>
-                      {data.email}
+                {plantas &&
+                  plantas.map((data) => (
+                    <Option key={data.id} value={data.id} label={data.planta}>
+                      {data.planta}
                     </Option>
                   ))}
               </Select>
@@ -193,10 +199,14 @@ const AdminForm = ({
                   })
                 }
               >
-                {users &&
-                  users.map((data) => (
-                    <Option key={data.id} value={data.id} label={data.email}>
-                      {data.email}
+                {servicios &&
+                  servicios.map((data) => (
+                    <Option
+                      key={data.id}
+                      value={data.id}
+                      label={data.tipoServicio}
+                    >
+                      {data.tipoServicio}
                     </Option>
                   ))}
               </Select>
@@ -355,14 +365,14 @@ const AdminForm = ({
                       })
                     }
                   >
-                    {users &&
-                      users.map((data) => (
+                    {paquetes &&
+                      paquetes.map((data) => (
                         <Option
                           key={data.id}
-                          value={data.email}
-                          label={data.email}
+                          value={data.id}
+                          label={data.paquete}
                         >
-                          {data.email}
+                          {data.paquete}
                         </Option>
                       ))}
                   </Select>
@@ -382,14 +392,14 @@ const AdminForm = ({
                       })
                     }
                   >
-                    {users &&
-                      users.map((data) => (
+                    {unidades &&
+                      unidades.map((data) => (
                         <Option
                           key={data.id}
-                          value={data.email}
-                          label={data.email}
+                          value={data.id}
+                          label={data.tipoUnidad}
                         >
-                          {data.email}
+                          {data.tipoUnidad}
                         </Option>
                       ))}
                   </Select>
@@ -432,6 +442,10 @@ const AdminForm = ({
 
 const mapStateToProps = (state) => {
   return {
+    plantas: state.firestore.ordered.Plantas,
+    servicios: state.firestore.ordered.Servicios,
+    unidades: state.firestore.ordered.Unidades,
+    paquetes: state.firestore.ordered.Paquetes,
     users: state.firestore.ordered.Users,
     profile: state.firebase.profile,
   };
@@ -446,6 +460,22 @@ export default compose(
       {
         collection: "Users",
         where: [["rol", "==", "User"]],
+      },
+      {
+        collection: "Unidades",
+        where: [["adminID", "==", props.profile.userID]],
+      },
+      {
+        collection: "Paquetes",
+        where: [["adminID", "==", props.profile.userID]],
+      },
+      {
+        collection: "Servicios",
+        where: [["adminID", "==", props.profile.userID]],
+      },
+      {
+        collection: "Plantas",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   })

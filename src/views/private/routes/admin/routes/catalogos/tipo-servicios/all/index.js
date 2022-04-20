@@ -56,6 +56,7 @@ export default compose(
     return [
       {
         collection: "Servicios",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   })

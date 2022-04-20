@@ -24,7 +24,7 @@ import DestinosModal from "./components/modal";
 const { Item } = Form;
 const { Title, Text } = Typography;
 
-const NewTipoServicio = ({ history, unidades }) => {
+const NewTipoServicio = ({ history, unidades, profile }) => {
   const [destinos, setDestinos] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -40,6 +40,7 @@ const NewTipoServicio = ({ history, unidades }) => {
         ...data,
         id,
         destinos,
+        adminID: profile.userID,
       })
       .then(async () => {
         history.push("/catalogos/servicios/all");
@@ -128,10 +129,10 @@ const NewTipoServicio = ({ history, unidades }) => {
                   name="tipoServicio"
                   style={{ width: "46%" }}
                   rules={[
-                    { required: true, message: "Ingresa tipo de unidad" },
+                    { required: true, message: "Ingresa tipo de servicio" },
                   ]}
                 >
-                  <Input placeholder="Nombre de Unidad" size="large" />
+                  <Input placeholder="Nombre de Servicio" size="large" />
                 </Item>
               </Row>
             </Col>
@@ -198,6 +199,7 @@ export default compose(
     return [
       {
         collection: "Unidades",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   }),

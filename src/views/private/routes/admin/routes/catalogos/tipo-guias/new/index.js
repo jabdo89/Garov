@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "antd";
 import shortid from "shortid";
-import GuiasModal from "./components/modal";
+import firebase from "firebase";
 import { HomeOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -27,7 +27,26 @@ const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
 const NewGuia = ({ history, profile }) => {
-  const onFinish = (values) => {};
+  const onFinish = (values) => {
+    const data = values;
+
+    const db = firebase.firestore();
+    const id = shortid.generate();
+
+    db.collection("TipoGuias")
+      .doc(id)
+      .set({
+        ...data,
+        id,
+        adminID: profile.userID,
+      })
+      .then(() => {
+        history.push("/catalogos/guias/all");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
     <>
@@ -39,15 +58,15 @@ const NewGuia = ({ history, profile }) => {
             </Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <Link to="/corridas/all">
+            <Link to="/catalogos/guias/all">
               <UserOutlined />
-              <span style={{ marginLeft: 5 }}>Corridas</span>
+              <span style={{ marginLeft: 5 }}>Tipo de Guias</span>
             </Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Crear Corrida</Breadcrumb.Item>
+          <Breadcrumb.Item>Crear Tipo de Guia</Breadcrumb.Item>
         </Breadcrumb>
         <Card>
-          <Title level={4}>Añade los datos de la nueva Corrida</Title>
+          <Title level={4}>Añade los datos del nuevo Tipo de Guia</Title>
           <Form layout="vertical" onFinish={onFinish}>
             <Divider
               style={{ borderTop: "grey" }}
@@ -55,14 +74,12 @@ const NewGuia = ({ history, profile }) => {
             ></Divider>
             <Col>
               <Item
-                label={<Text strong>Tipo de Corrida</Text>}
-                name="tipo"
-                style={{ width: "100%" }}
+                label={<Text strong>Tipo de Guia</Text>}
+                name="tipoGuia"
+                style={{ width: "48%" }}
+                rules={[{ required: true, message: "Ingresa Tipo de Guia" }]}
               >
-                <Radio.Group defaultValue="a" buttonStyle="solid">
-                  <Radio.Button value="a">Corrida a Cliente</Radio.Button>
-                  <Radio.Button value="b">Corrida a Bodega</Radio.Button>
-                </Radio.Group>
+                <Input placeholder="Tipo de Guia" size="large" />
               </Item>
             </Col>
             <Item style={{ display: "block", width: "100%", marginTop: 20 }}>

@@ -23,7 +23,7 @@ const { Item } = Form;
 const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
-const NewUnidad = ({ history }) => {
+const NewUnidad = ({ history, profile }) => {
   const onFinish = (values) => {
     const data = values;
 
@@ -35,6 +35,7 @@ const NewUnidad = ({ history }) => {
       .set({
         ...data,
         id,
+        adminID: profile.userID,
       })
       .then(async () => {
         history.push("/catalogos/unidades/all");

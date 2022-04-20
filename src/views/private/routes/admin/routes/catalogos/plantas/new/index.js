@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, withRouter } from "react-router-dom";
+import { firestoreConnect } from "react-redux-firebase";
 import {
   Breadcrumb,
   Card,
@@ -14,8 +15,8 @@ import {
   Tag,
   Tooltip,
 } from "antd";
+import firebase from "firebase";
 import shortid from "shortid";
-import GuiasModal from "./components/modal";
 import { HomeOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -26,8 +27,39 @@ const { Item } = Form;
 const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
-const NewGuia = ({ history, profile }) => {
-  const onFinish = (values) => {};
+const NewPlanta = ({
+  history,
+  profile,
+  servicios,
+  serviciosObj,
+  unidades,
+  unidadesObj,
+}) => {
+  const onFinish = (values) => {
+    const data = values;
+    ["preferido"].forEach((e) => {
+      if (e.preferido === undefined) {
+        data[e] = "No";
+      }
+    });
+
+    const db = firebase.firestore();
+    const id = shortid.generate();
+
+    db.collection("Plantas")
+      .doc(id)
+      .set({
+        ...data,
+        id,
+        adminID: profile.userID,
+      })
+      .then(() => {
+        history.push("/catalogos/plantas/all");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
     <>
@@ -41,29 +73,170 @@ const NewGuia = ({ history, profile }) => {
           <Breadcrumb.Item>
             <Link to="/corridas/all">
               <UserOutlined />
-              <span style={{ marginLeft: 5 }}>Corridas</span>
+              <span style={{ marginLeft: 5 }}>Plantas</span>
             </Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>Crear Corrida</Breadcrumb.Item>
+          <Breadcrumb.Item>Crear Planta</Breadcrumb.Item>
         </Breadcrumb>
         <Card>
-          <Title level={4}>Añade los datos de la nueva Corrida</Title>
+          <Title level={4}>Añade los datos de la nueva Planta</Title>
           <Form layout="vertical" onFinish={onFinish}>
             <Divider
               style={{ borderTop: "grey" }}
               orientation="right"
             ></Divider>
             <Col>
-              <Item
-                label={<Text strong>Tipo de Corrida</Text>}
-                name="tipo"
-                style={{ width: "100%" }}
-              >
-                <Radio.Group defaultValue="a" buttonStyle="solid">
-                  <Radio.Button value="a">Corrida a Cliente</Radio.Button>
-                  <Radio.Button value="b">Corrida a Bodega</Radio.Button>
-                </Radio.Group>
-              </Item>
+              <Row>
+                <Item
+                  label={<Text strong>Nombre de Planta</Text>}
+                  name="planta"
+                  style={{ width: "23%" }}
+                  rules={[
+                    { required: true, message: "Ingresa nombre de Planta" },
+                  ]}
+                >
+                  <Input placeholder="Planta" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Socio</Text>}
+                  name="socio"
+                  style={{ width: "23%" }}
+                  rules={[
+                    { required: true, message: "Ingresa nombre de Socio" },
+                  ]}
+                >
+                  <Input placeholder="Socio" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Razon Social</Text>}
+                  name="razonSocial"
+                  style={{ width: "23%" }}
+                  rules={[{ required: true, message: "Ingresa Razon Social" }]}
+                >
+                  <Input placeholder="Razon Social" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Preferido</Text>}
+                  name="preferido"
+                  style={{ width: "23%" }}
+                >
+                  <Radio.Group defaultValue="No">
+                    <Radio.Button value="Si">Si</Radio.Button>
+                    <Radio.Button value="No">No</Radio.Button>
+                  </Radio.Group>
+                </Item>
+              </Row>
+            </Col>
+            <Col>
+              <Row>
+                <Item
+                  label={<Text strong>Dirrecion</Text>}
+                  name="Dirrecion"
+                  style={{ width: "23%" }}
+                  rules={[
+                    { required: true, message: "Ingresa Dirrecion de Planta" },
+                  ]}
+                >
+                  <Input placeholder="Dirrecion de Planta" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Estado</Text>}
+                  name="estado"
+                  style={{ width: "23%" }}
+                  rules={[{ required: true, message: "Ingresa Estado" }]}
+                >
+                  <Input placeholder="Estado" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Municipio</Text>}
+                  name="municipio"
+                  style={{ width: "23%" }}
+                  rules={[{ required: true, message: "Ingresa Municipio" }]}
+                >
+                  <Input placeholder="Municipio" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Codigo Postal</Text>}
+                  name="codigoPostal"
+                  style={{ width: "23%" }}
+                  rules={[{ required: true, message: "Ingresa Codigo Postal" }]}
+                >
+                  <Input placeholder="Codigo Postal" size="large" />
+                </Item>
+              </Row>
+              <Row>
+                <Item
+                  label={<Text strong>Tipo de Servicio Prefereido</Text>}
+                  name="servicioPreferido"
+                  style={{ width: "47%" }}
+                  rules={[{ required: true, message: "Ingresa Servicio" }]}
+                >
+                  <Select placeholder="Servicio" size="large">
+                    {servicios &&
+                      servicios.map((data) => (
+                        <Option
+                          key={data.id}
+                          value={data.id}
+                          label={data.tipoServicio}
+                        >
+                          {data.tipoServicio}
+                        </Option>
+                      ))}
+                  </Select>
+                </Item>
+                <Item
+                  label={<Text strong>Tipo de Unidad Prefereida</Text>}
+                  name="unidadPreferida"
+                  style={{ width: "47%" }}
+                  rules={[{ required: true, message: "Ingresa Unidad" }]}
+                >
+                  <Select placeholder="Unidad" size="large">
+                    {unidades &&
+                      unidades.map((data) => (
+                        <Option
+                          key={data.id}
+                          value={data.id}
+                          label={data.tipoUnidad}
+                        >
+                          {data.tipoUnidad}
+                        </Option>
+                      ))}
+                  </Select>
+                </Item>
+              </Row>
+              <Divider style={{ borderTop: "grey" }} orientation="right">
+                Informacion de Contacto
+              </Divider>
+              <Row>
+                <Item
+                  label={<Text strong>Contacto</Text>}
+                  name="contact"
+                  style={{ width: "30%" }}
+                  rules={[
+                    { required: true, message: "Ingresa Nombre de Contacto" },
+                  ]}
+                >
+                  <Input placeholder="Nombre de Contacto" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Telefono</Text>}
+                  name="telefono"
+                  style={{ width: "30%" }}
+                  rules={[{ required: true, message: "Ingresa telefono" }]}
+                >
+                  <Input placeholder="Telefono" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Nota de Horario</Text>}
+                  name="nota"
+                  style={{ width: "30%" }}
+                  rules={[
+                    { required: true, message: "Ingresa Nota de Horario" },
+                  ]}
+                >
+                  <Input placeholder="Nota" size="large" />
+                </Item>
+              </Row>
             </Col>
             <Item style={{ display: "block", width: "100%", marginTop: 20 }}>
               <Button
@@ -83,8 +256,29 @@ const NewGuia = ({ history, profile }) => {
 
 const mapStateToProps = (state) => {
   return {
+    servicios: state.firestore.ordered.Servicios,
+    unidades: state.firestore.ordered.Unidades,
+    serviciosObj: state.firestore.data.Servicios,
+    unidadesObj: state.firestore.data.Unidades,
     profile: state.firebase.profile,
   };
 };
 
-export default compose(connect(mapStateToProps), withRouter)(NewGuia);
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect((props) => {
+    if (props.profile.userID === undefined) return [];
+
+    return [
+      {
+        collection: "Servicios",
+        where: [["adminID", "==", props.profile.userID]],
+      },
+      {
+        collection: "Unidades",
+        where: [["adminID", "==", props.profile.userID]],
+      },
+    ];
+  }),
+  withRouter
+)(NewPlanta);

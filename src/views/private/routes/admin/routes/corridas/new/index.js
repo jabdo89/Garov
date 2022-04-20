@@ -41,6 +41,7 @@ const NewCorrida = ({
   unidades,
   operadoresObj,
   unidadesObj,
+  profile,
 }) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -70,13 +71,26 @@ const NewCorrida = ({
     }
 
     const db = firebase.firestore();
+    const id = shortid.generate();
     db.collection("Corridas")
-      .add({
+      .doc(id)
+      .set({
         ...data,
+        id,
         guias: guiasArray,
+        estatus: "activo",
         fecha: new Date(),
+        adminID: profile.userID,
       })
       .then(() => {
+        for (let i = 0; i < guiasArray.length; i++) {
+          db.collection("Guias")
+            .doc(guiasArray[i])
+            .update({
+              estatus: "En Corrida",
+            });
+          console.log("entro");
+        }
         history.push("/corridas/all");
       })
       .catch((err) => {
@@ -120,14 +134,14 @@ const NewCorrida = ({
       title: "# Paquetes",
       dataIndex: "paquetes",
       key: "paquetes",
-      render: (paquetes) => paquetes.length,
+      render: (paquetes) => paquetes?.length,
     },
     {
       title: "Tipos de Paquetes",
       dataIndex: "paquetes",
       key: "paquetes",
       render: (paquetes) =>
-        paquetes.map((paquete) => {
+        paquetes?.map((paquete) => {
           return (
             <Tag color="blue" key={shortid.generate()}>
               {paquete.tipoDePaquete}
@@ -277,12 +291,12 @@ const NewCorrida = ({
                 >
                   <Text>{unidadesFields.polizaSeguro}</Text>
                 </Item>
-                <Item
+                {/* <Item
                   label={<Text strong>Licencia de Manejo</Text>}
                   style={{ width: "20%" }}
                 >
                   <Text>{operadorFields.licencia}</Text>
-                </Item>
+                </Item> */}
               </Row>
             </Col>
             <Divider style={{ borderTop: "grey" }} orientation="right">
@@ -351,9 +365,11 @@ export default compose(
     return [
       {
         collection: "Operadores",
+        where: [["adminID", "==", props.profile.userID]],
       },
       {
         collection: "Unidades",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   }),

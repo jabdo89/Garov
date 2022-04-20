@@ -8,65 +8,45 @@ import { Table, Tag, Tooltip, Button } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 
-const Corridas = ({ corridas }) => {
+const Plantas = ({ plantas }) => {
   const columns = [
     {
-      title: "Estatus",
-      key: "estatus",
-      dataIndex: "estatus",
-      render: (deliveries) => (
-        <Tag color="green" key={shortid.generate()}>
-          {deliveries}
-        </Tag>
-      ),
+      title: "Planta",
+      key: "planta",
+      dataIndex: "planta",
+      render: (planta) => <Tag color="green">{planta}</Tag>,
     },
     {
-      title: "# Guia",
-      dataIndex: "numGuia",
-      key: "numGuia",
+      title: "Horario Entrega",
+      dataIndex: "nota",
+      key: "nota",
     },
     {
-      title: "# Orden",
-      dataIndex: "numOrden",
-      key: "numOrden",
+      title: "Socio",
+      dataIndex: "socio",
+      key: "socio",
     },
     {
-      title: "Tipo de Envio",
-      key: "tipoEnvio",
-      dataIndex: "tipoEnvio",
+      title: "Contacto",
+      dataIndex: "contact",
+      key: "contact",
     },
     {
-      title: "Cliente",
-      key: "cliente",
-      dataIndex: "cliente",
-    },
-    {
-      title: "Evidencia",
-      dataIndex: "evidence",
-      key: "evidence",
-      // eslint-disable-next-line react/prop-types
-      render: (photo) => (
-        <Tooltip title="Evidencia">
-          <Button
-            shape="circle"
-            onClick={() => window.open(photo)}
-            icon={<FileImageOutlined />}
-            disabled={!photo}
-          />
-        </Tooltip>
-      ),
+      title: "Telefono",
+      key: "telefono",
+      dataIndex: "telefono",
     },
   ];
 
-  if (!corridas) {
+  if (!plantas) {
     return null;
   }
 
   return (
     <Container>
       <Table
-        title={() => <Title data={corridas} />}
-        dataSource={corridas.map((service) => ({
+        title={() => <Title data={plantas} />}
+        dataSource={plantas.map((service) => ({
           key: service.id,
           ...service,
         }))}
@@ -78,7 +58,7 @@ const Corridas = ({ corridas }) => {
 
 const mapStateToProps = (state) => {
   return {
-    corridas: state.firestore.ordered.Corridas,
+    plantas: state.firestore.ordered.Plantas,
     profile: state.firebase.profile,
   };
 };
@@ -90,8 +70,9 @@ export default compose(
 
     return [
       {
-        collection: "Corridas",
+        collection: "Plantas",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   })
-)(Corridas);
+)(Plantas);

@@ -3,70 +3,43 @@ import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import shortid from "shortid";
-import { FileImageOutlined } from "@ant-design/icons";
 import { Table, Tag, Tooltip, Button } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 
-const Corridas = ({ corridas }) => {
+const Clientes = ({ clientes }) => {
   const columns = [
     {
-      title: "Estatus",
-      key: "estatus",
-      dataIndex: "estatus",
-      render: (deliveries) => (
+      title: "Numero de Cliente",
+      key: "numCliente",
+      dataIndex: "numCliente",
+    },
+    {
+      title: "Socio",
+      dataIndex: "socio",
+      key: "socio",
+      render: (socio) => (
         <Tag color="green" key={shortid.generate()}>
-          {deliveries}
+          {socio}
         </Tag>
       ),
     },
     {
-      title: "# Guia",
-      dataIndex: "numGuia",
-      key: "numGuia",
-    },
-    {
-      title: "# Orden",
-      dataIndex: "numOrden",
-      key: "numOrden",
-    },
-    {
-      title: "Tipo de Envio",
-      key: "tipoEnvio",
-      dataIndex: "tipoEnvio",
-    },
-    {
-      title: "Cliente",
-      key: "cliente",
-      dataIndex: "cliente",
-    },
-    {
-      title: "Evidencia",
-      dataIndex: "evidence",
-      key: "evidence",
-      // eslint-disable-next-line react/prop-types
-      render: (photo) => (
-        <Tooltip title="Evidencia">
-          <Button
-            shape="circle"
-            onClick={() => window.open(photo)}
-            icon={<FileImageOutlined />}
-            disabled={!photo}
-          />
-        </Tooltip>
-      ),
+      title: "Razon Social",
+      dataIndex: "razonSocial",
+      key: "razonSocial",
     },
   ];
 
-  if (!corridas) {
+  if (!clientes) {
     return null;
   }
 
   return (
     <Container>
       <Table
-        title={() => <Title data={corridas} />}
-        dataSource={corridas.map((service) => ({
+        title={() => <Title data={clientes} />}
+        dataSource={clientes.map((service) => ({
           key: service.id,
           ...service,
         }))}
@@ -78,7 +51,7 @@ const Corridas = ({ corridas }) => {
 
 const mapStateToProps = (state) => {
   return {
-    corridas: state.firestore.ordered.Corridas,
+    clientes: state.firestore.ordered.Users,
     profile: state.firebase.profile,
   };
 };
@@ -90,8 +63,12 @@ export default compose(
 
     return [
       {
-        collection: "Corridas",
+        collection: "Users",
+        where: [
+          ["adminID", "==", props.profile.userID],
+          ["rol", "==", "Company"],
+        ],
       },
     ];
   })
-)(Corridas);
+)(Clientes);

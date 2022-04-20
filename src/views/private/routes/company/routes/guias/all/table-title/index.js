@@ -12,9 +12,8 @@ const TableTitle = ({ search, setSearch, data }) => {
   return (
     <TitleContainer>
       <Title style={{ margin: "auto 10px" }} level={3}>
-        Tabla de Guias Empresa
+        Guias
       </Title>
-      <ExcelExport fileExport={ExcelFormater} data={data} />
       <Search
         style={{ width: 250, margin: "auto 10px auto auto" }}
         allowClear
@@ -22,6 +21,7 @@ const TableTitle = ({ search, setSearch, data }) => {
         placeholder="Buscar Guia"
         onChange={({ target: { value } }) => setSearch(value)}
       />
+      <ExcelExport fileExport={ExcelFormater} data={data} />
     </TitleContainer>
   );
 };

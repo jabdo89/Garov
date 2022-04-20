@@ -7,16 +7,9 @@ import { EditOutlined } from "@ant-design/icons";
 import { Table, Tag, Tooltip, Button, Row, Col } from "antd";
 import Title from "./table-title";
 import AdminModal from "./components/admin-modal";
-import {
-  Container,
-  ComponentCard,
-  ComponentSubtitle,
-  ComponentDescription,
-  IconDiv,
-  ComponentTitle,
-} from "./elements";
+import { Container } from "./elements";
 
-const Orders = ({ guias }) => {
+const Orders = ({ guias, users }) => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState([]);
   const [dateRange, setDateRange] = useState([]);
@@ -36,31 +29,32 @@ const Orders = ({ guias }) => {
       ),
     },
     {
-      title: "# Guia",
-      dataIndex: "numGuia",
-      key: "numGuia",
+      title: "# Delivery",
+      dataIndex: "delivery",
+      key: "delivery",
     },
     {
-      title: "# Orden",
+      title: "# Guia",
       dataIndex: "numOrden",
       key: "numOrden",
     },
     {
-      title: "Tipo de Envio",
+      title: "# Orden",
       key: "tipoEnvio",
       dataIndex: "tipoEnvio",
     },
     {
       title: "Cliente",
-      key: "cliente",
-      dataIndex: "cliente",
+      key: "clienteID",
+      dataIndex: "clienteID",
+      render: (cliente) => users && users[cliente]?.socio,
     },
     {
       title: "Documentar",
       key: "action",
       // eslint-disable-next-line react/prop-types
       render: (row) => (
-        <Tooltip title="Administrar">
+        <Tooltip title="Documentar">
           <Button
             type="primary"
             icon={<EditOutlined />}
@@ -76,12 +70,16 @@ const Orders = ({ guias }) => {
     },
   ];
 
-  function checkSearch(company) {
-    return company.company.toUpperCase() === search.toUpperCase();
-  }
-
   if (!guias) {
     return null;
+  }
+
+  let guiasFiltered = guias;
+
+  if (search !== "") {
+    guiasFiltered = guiasFiltered.filter((guia) => {
+      return guia.delivery.includes(search);
+    });
   }
 
   return (
@@ -93,10 +91,10 @@ const Orders = ({ guias }) => {
             setSearch={setSearch}
             setStatus={setStatus}
             setDateRange={setDateRange}
-            data={guias}
+            data={guiasFiltered}
           />
         )}
-        dataSource={guias.map((service) => ({
+        dataSource={guiasFiltered.map((service) => ({
           key: service.id,
           ...service,
         }))}
@@ -116,6 +114,7 @@ const mapStateToProps = (state) => {
   return {
     guias: state.firestore.ordered.Guias,
     profile: state.firebase.profile,
+    users: state.firestore.data.Users,
   };
 };
 
@@ -127,7 +126,13 @@ export default compose(
     return [
       {
         collection: "Guias",
-        where: [["estatus", "==", "Creado"]],
+        where: [
+          ["estatus", "==", "Creado"],
+          ["adminID", "==", props.profile.userID],
+        ],
+      },
+      {
+        collection: "Users",
       },
     ];
   })

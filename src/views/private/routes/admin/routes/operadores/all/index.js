@@ -113,6 +113,7 @@ export default compose(
     return [
       {
         collection: "Operadores",
+        where: [["adminID", "==", props.profile.userID]],
       },
     ];
   })

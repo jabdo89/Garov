@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import firebase from "firebase";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
+import shortid from "shortid";
+import { firestoreConnect } from "react-redux-firebase";
 import { Link, withRouter } from "react-router-dom";
 import {
   Breadcrumb,
@@ -31,8 +33,9 @@ const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
 const NewGuia = ({ history, profile }) => {
+  const idGuia = shortid.generate();
+
   const onFinish = (values) => {
-    console.log(values);
     const data = values;
     ["fechaEmbarque", "fechaCompromiso", "estatus"].forEach(
       (e) => delete data[e]
@@ -40,8 +43,6 @@ const NewGuia = ({ history, profile }) => {
     const db = firebase.firestore();
     const fechaEmbarque = moment(values.fechaEmbarque).valueOf();
     const fechaCompromiso = moment(values.fechaCompromiso).valueOf();
-
-    console.log(data);
     const id = uuidv4();
     db.collection("Guias")
       .doc(id)
@@ -89,7 +90,7 @@ const NewGuia = ({ history, profile }) => {
                     { required: true, message: "Ingresa numero de Gúia" },
                   ]}
                 >
-                  <Input placeholder="# Guia" size="large" />
+                  <Text>{idGuia}</Text>
                 </Item>
                 <Item
                   name="numCliente"
@@ -99,11 +100,7 @@ const NewGuia = ({ history, profile }) => {
                     { required: true, message: "Ingrese numero de Cliente" },
                   ]}
                 >
-                  <Select placeholder="# Cliente" size="large">
-                    <Option key={"prueba"} value={"prueba"} label={"prueba"}>
-                      Prueba
-                    </Option>
-                  </Select>
+                  <Text>{profile.numCliente}</Text>
                 </Item>
                 <Item
                   name="fechaEmbarque"
@@ -135,7 +132,7 @@ const NewGuia = ({ history, profile }) => {
                     { required: true, message: "Ingresa nombre de Cliente" },
                   ]}
                 >
-                  <Input placeholder="Cliente" size="large" />
+                  <Text>{profile.socio}</Text>
                 </Item>
                 <Item
                   label={<Text strong># Factura</Text>}
@@ -413,4 +410,16 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default compose(connect(mapStateToProps), withRouter)(NewGuia);
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect((props) => {
+    if (props.profile.userID === undefined) return [];
+
+    return [
+      {
+        collection: "Guias",
+        where: [["clienteID", "==", props.profile.userID]],
+      },
+    ];
+  })
+)(NewGuia);

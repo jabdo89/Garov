@@ -12,7 +12,7 @@ const TableTitle = ({ search, setSearch, data }) => {
   return (
     <TitleContainer>
       <Title style={{ margin: "auto 10px" }} level={3}>
-        Corridas
+        Plantas
       </Title>
       <Search
         style={{ width: 250, margin: "auto 10px auto auto" }}
@@ -21,9 +21,9 @@ const TableTitle = ({ search, setSearch, data }) => {
         placeholder="Buscar Guia"
         onChange={({ target: { value } }) => setSearch(value)}
       />
-      <Link to="/catalogos/clientes/new">
+      <Link to="/catalogos/plantas/new">
         <Button type="primary" icon={<PlusOutlined />}>
-          Agregar Corrida
+          Agregar Planta
         </Button>
       </Link>
     </TitleContainer>
