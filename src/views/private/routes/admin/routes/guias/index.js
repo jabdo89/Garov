@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
+import firebase from "firebase";
 import shortid from "shortid";
+import moment from "moment";
 import {
   CodeSandboxOutlined,
   CarOutlined,
   ClockCircleOutlined,
   FundOutlined,
-  EditOutlined,
   SnippetsOutlined,
 } from "@ant-design/icons";
-import { Table, Tag, Tooltip, Button, Row, Col } from "antd";
-import PropTypes from "prop-types";
+import { Table, Tag, Tooltip, Button, Row, Col, Spin } from "antd";
 import Title from "./table-title";
 import AdminModal from "./components/admin-modal";
 import {
@@ -24,14 +24,67 @@ import {
   ComponentTitle,
 } from "./elements";
 
-const Orders = ({ guias, profile, users }) => {
+const Orders = ({ users }) => {
+  const [guias, setGuias] = useState(undefined);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState([]);
-  const [dateRange, setDateRange] = useState([]);
-
+  const [dateRange, setDateRange] = useState(undefined);
   const [showModal, setShowModal] = useState(false);
   const [editingLocation, setEditingLocation] = useState(undefined);
-  const [filteredDate, setFilteredData] = useState(guias);
+
+  useEffect(() => {
+    const db = firebase.firestore();
+
+    const query = async () => {
+      if (dateRange) {
+        db.collection("Guias")
+          .where(
+            "fechaCreado",
+            ">=",
+            firebase.firestore.Timestamp.fromDate(dateRange[0]?._d)
+          )
+          .where(
+            "fechaCreado",
+            "<=",
+            firebase.firestore.Timestamp.fromDate(dateRange[1]?._d)
+          )
+          .onSnapshot((querySnapshot) => {
+            const guiasArray = [];
+            let data = {};
+            // eslint-disable-next-line func-names
+            querySnapshot.forEach((doc) => {
+              data = doc.data();
+              guiasArray.push(doc.data());
+            });
+            setGuias(guiasArray);
+          });
+      } else {
+        db.collection("Guias")
+          .where(
+            "fechaCreado",
+            ">=",
+            firebase.firestore.Timestamp.fromDate(moment().subtract(7, "d")._d)
+          )
+          .where(
+            "fechaCreado",
+            "<=",
+            firebase.firestore.Timestamp.fromDate(moment()._d)
+          )
+          .onSnapshot((querySnapshot) => {
+            const guiasArray = [];
+            let data = {};
+            // eslint-disable-next-line func-names
+            querySnapshot.forEach((doc) => {
+              data = doc.data();
+              guiasArray.push(doc.data());
+            });
+            setGuias(guiasArray);
+          });
+      }
+    };
+
+    query();
+  }, [dateRange]);
 
   const columns = [
     {
@@ -66,6 +119,11 @@ const Orders = ({ guias, profile, users }) => {
       render: (cliente) => users && users[cliente]?.socio,
     },
     {
+      title: "Cantidad Paquetes",
+      key: "cantidadPqte",
+      dataIndex: "cantidadPqte",
+    },
+    {
       title: "Evidencia",
       key: "action",
       // eslint-disable-next-line react/prop-types
@@ -88,93 +146,12 @@ const Orders = ({ guias, profile, users }) => {
     },
   ];
 
-  const prueba = async () => {
-    const params = {
-      "soapenv:Envelope": {
-        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "soapenv:Body": {
-          "urn:crearGuia": {
-            contenido: {
-              "@xsi:type": "xsd:string",
-              "#text": "PAQUETE GRAINGER",
-            },
-            dDireccion: {
-              "@xsi:type": "xsd:string",
-              "#text":
-                "CD INDUSTRIAL BRUNO PAGLIAL   ARRAYANES LOTE 4 MANZANA 14",
-            },
-            rDireccion: {
-              "#text": "AV. DESARROLLO 500 PARQUE INDUSTRIAL FINSA GUADALUPE",
-              "@xsi:type": "xsd:string",
-            },
-            dCorreoElectronico: { "#text": "NA", "@xsi:type": "xsd:string" },
-            rCorreoElectronico: { "@xsi:type": "xsd:string" },
-            cantidadPqte: { "@xsi:type": "xsd:string", "#text": "2" },
-            nCliente: { "@xsi:type": "xsd:string", "#text": "MD0-0886202269" },
-            valorDeclarado: { "#text": "0", "@xsi:type": "xsd:string" },
-            nFactura: { "#text": "6545808053", "@xsi:type": "xsd:string" },
-            rCodigoPostal: { "#text": "67132", "@xsi:type": "xsd:string" },
-            usuarioWS: {
-              "#text": "grainger@garovexpress.com",
-              "@xsi:type": "xsd:string",
-            },
-            dColonia: { "@xsi:type": "xsd:string", "#text": "NA" },
-            dNotas: { "#text": "NA", "@xsi:type": "xsd:string" },
-            "@soapenv:encodingStyle":
-              "http://schemas.xmlsoap.org/soap/encoding/",
-            ancho: { "#text": "0", "@xsi:type": "xsd:string" },
-            rTelefono: { "@xsi:type": "xsd:string" },
-            dCodigoPostal: { "@xsi:type": "xsd:string", "#text": "91697" },
-            delivery: { "@xsi:type": "xsd:string", "#text": "6545808053" },
-            dTelefono: { "#text": "NA", "@xsi:type": "xsd:string" },
-            nOrden: { "#text": "1442469486", "@xsi:type": "xsd:string" },
-            nombreRemitente: { "@xsi:type": "xsd:string", "#text": "Grainger" },
-            nombreDestinatatio: {
-              "@xsi:type": "xsd:string",
-              "#text": "INSPECCIONES Y PRUEBAS NO DEST RUCTIVAS S DE RL DE CV",
-            },
-            dCiudad: { "#text": "VERACRUZ", "@xsi:type": "xsd:string" },
-            dEstado: { "@xsi:type": "xsd:string", "#text": "VER" },
-            rTelefonoMovil: { "@xsi:type": "xsd:string" },
-            rPais: { "@xsi:type": "xsd:string", "#text": "MX" },
-            dMunicipio: { "#text": "VERACRUZ", "@xsi:type": "xsd:string" },
-            dTelefonoMovil: { "#text": "NA", "@xsi:type": "xsd:string" },
-            contrasena: { "@xsi:type": "xsd:string", "#text": "#Grainger17" },
-            largo: { "#text": "0", "@xsi:type": "xsd:string" },
-            rMunicipio: { "@xsi:type": "xsd:string", "#text": "MONTERREY" },
-            rEstado: { "#text": "NUEVO LEON", "@xsi:type": "xsd:string" },
-            rCiudad: { "#text": "MONTERREY", "@xsi:type": "xsd:string" },
-            rColonia: { "@xsi:type": "xsd:string" },
-            dPais: { "#text": "MX", "@xsi:type": "xsd:string" },
-            peso: { "@xsi:type": "xsd:string", "#text": "0" },
-            alto: { "@xsi:type": "xsd:string", "#text": "0" },
-          },
-        },
-        "@xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
-        "soapenv:Header": null,
-        "@xmlns:urn": "urn:kpiGarovWS",
-      },
-    };
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(params),
-    };
-
-    fetch(
-      "https://us-central1-garov-3c5b2.cloudfunctions.net/grainger",
-      options
-    )
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  };
   if (!guias) {
-    return null;
+    return <Spin size="large" style={{ padding: 200 }} />;
   }
-  const creadas = guias.filter((guia) => guia.estatus === "Creado");
+  const creadas = guias.filter(
+    (guia) => guia.estatus === "Creado" || guia.estatus === "Escaneado"
+  );
   const documentado = guias.filter((guia) => guia.estatus === "Documentado");
   const enCorrida = guias.filter((guia) => guia.estatus === "En Corrida");
   const completados = guias.filter(
@@ -192,8 +169,7 @@ const Orders = ({ guias, profile, users }) => {
       return guia.delivery.includes(search);
     });
   }
-  if (dateRange.length !== 0) {
-  }
+
   return (
     <Container>
       <Row justify="space-between">
@@ -209,7 +185,7 @@ const Orders = ({ guias, profile, users }) => {
                 </IconDiv>
               </Col>
             </Row>
-            <ComponentTitle>Creados</ComponentTitle>
+            <ComponentTitle>Creados/Escaneados</ComponentTitle>
           </ComponentCard>
         </Col>
         <Col xs={24} sm={12} md={12} lg={6}>
@@ -264,9 +240,6 @@ const Orders = ({ guias, profile, users }) => {
           </ComponentCard>
         </Col>
       </Row>
-      <Button style={{ margin: 20 }} onClick={() => prueba()}>
-        Generar Guia
-      </Button>
       <Table
         title={() => (
           <Title
@@ -298,7 +271,6 @@ const Orders = ({ guias, profile, users }) => {
 
 const mapStateToProps = (state) => {
   return {
-    guias: state.firestore.ordered.Guias,
     users: state.firestore.data.Users,
     profile: state.firebase.profile,
   };
@@ -310,10 +282,6 @@ export default compose(
     if (props.profile.userID === undefined) return [];
 
     return [
-      {
-        collection: "Guias",
-        where: [["adminID", "==", props.profile.userID]],
-      },
       {
         collection: "Users",
       },

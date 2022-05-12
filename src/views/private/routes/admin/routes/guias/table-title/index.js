@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Select } from "antd";
+import moment from "moment";
 import { Input, Typography, DatePicker } from "antd";
 import { TitleContainer } from "./elements";
 import ExcelExport from "../ExcelExport";
@@ -35,14 +36,17 @@ const TableTitle = ({ search, setSearch, setStatus, setDateRange, data }) => {
             onChange={(e) => setStatus(e)}
           >
             <Option key={"Creado"}>Creado</Option>
-            <Option key={"Modificando"}>Modificando</Option>
+            <Option key={"Documentado"}>Escaneado</Option>
+            <Option key={"Documentado"}>Documentado</Option>
             <Option key={"En Corrida"}>En Corrida</Option>
             <Option key={"Entregado"}>Entregado</Option>
+            <Option key={"Regresado"}>Regresado</Option>
           </Select>
           <RangePicker
             onChange={(e) => setDateRange(e)}
             style={{ width: "50%", marginRigth: 40 }}
             placeholder={["Comienzo", "Fin"]}
+            defaultValue={[moment().subtract(7, "d"), moment()]}
           />
         </div>
         <div>

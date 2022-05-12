@@ -127,7 +127,7 @@ export default compose(
       {
         collection: "Guias",
         where: [
-          ["estatus", "==", "Creado"],
+          ["estatus", "==", "Escaneado"],
           ["adminID", "==", props.profile.userID],
         ],
       },

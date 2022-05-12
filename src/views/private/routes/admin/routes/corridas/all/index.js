@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import firebase from "firebase";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import shortid from "shortid";
 import moment from "moment";
-import { FileImageOutlined } from "@ant-design/icons";
-import { Table, Tag, Tooltip, Button } from "antd";
+import { Table, Spin } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 
-const Corridas = ({ corridas, operadores, guias }) => {
+const Corridas = ({ corridas, operadores }) => {
   const [search, setSearch] = useState("");
 
-  if (!operadores || !guias) {
-    return null;
+  if (!operadores) {
+    return <Spin size="large" style={{ padding: 200 }} />;
   }
 
   const columns = [
@@ -41,23 +38,10 @@ const Corridas = ({ corridas, operadores, guias }) => {
       dataIndex: "guias",
       render: (guiasList) => guiasList.length,
     },
-    {
-      title: "Cant Paquetes",
-      key: "guias",
-      dataIndex: "guias",
-      render: (guiasList) => {
-        let counter = 0;
-
-        for (let i = 0; i < guiasList.length; i++) {
-          counter += guias[guiasList[i]]?.paquetes?.length;
-        }
-        return counter;
-      },
-    },
   ];
 
   if (!corridas) {
-    return null;
+    return <Spin size="large" style={{ padding: 200 }} />;
   }
   let corridasFiltered = corridas;
 
@@ -91,7 +75,6 @@ const mapStateToProps = (state) => {
   return {
     corridas: state.firestore.ordered.Corridas,
     operadores: state.firestore.data.Operadores,
-    guias: state.firestore.data.Guias,
     profile: state.firebase.profile,
   };
 };
@@ -108,9 +91,6 @@ export default compose(
       },
       {
         collection: "Operadores",
-      },
-      {
-        collection: "Guias",
       },
     ];
   })
