@@ -1,31 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import shortid from "shortid";
+import firebase from "firebase";
 import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
-import { Table, Tag, Tooltip, Button, Row, Col } from "antd";
+import { Table, Tag, Tooltip, Button, Row, Spin } from "antd";
 import Title from "./table-title";
 import AdminModal from "./components/admin-modal";
 import EvidenceModal from "./components/evidence-modal";
-import {
-  Container,
-  ComponentCard,
-  ComponentSubtitle,
-  ComponentDescription,
-  IconDiv,
-  ComponentTitle,
-} from "./elements";
+import { Container } from "./elements";
 
-const Orders = ({ guias }) => {
+const Orders = ({ guias, profile }) => {
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState([]);
-  const [dateRange, setDateRange] = useState([]);
+  const [users, setUsers] = useState(undefined);
 
   const [showModal, setShowModal] = useState(false);
   const [editingLocation, setEditingLocation] = useState(undefined);
 
   const [parcelEvidence, setParcelEvidence] = useState(undefined);
+
+  useEffect(() => {
+    const db = firebase.firestore();
+
+    const query = async () => {
+      if (profile) {
+        db.collection("Users")
+          .where("adminID", "==", profile.userID)
+          .onSnapshot((querySnapshot) => {
+            const usersArray = [];
+            let data = {};
+            // eslint-disable-next-line func-names
+            querySnapshot.forEach((doc) => {
+              data = doc.data();
+              usersArray.push(doc.data());
+            });
+            setUsers(usersArray);
+          });
+      }
+    };
+    query();
+  }, [profile]);
 
   const columns = [
     {
@@ -39,24 +54,27 @@ const Orders = ({ guias }) => {
       ),
     },
     {
-      title: "# Guia",
-      dataIndex: "numGuia",
-      key: "numGuia",
+      title: "Delivery Number",
+      dataIndex: "delivery",
+      key: "delivery",
     },
     {
       title: "# Orden",
-      dataIndex: "numOrden",
-      key: "numOrden",
+      dataIndex: "id",
+      key: "id",
+      render: (id) => id.substring(0, 6),
     },
     {
-      title: "Tipo de Envio",
-      key: "tipoEnvio",
-      dataIndex: "tipoEnvio",
+      title: "Numero de Factura",
+      key: "numFactura",
+      dataIndex: "nFactura",
     },
     {
       title: "Cliente",
-      key: "cliente",
-      dataIndex: "cliente",
+      key: "clienteID",
+      dataIndex: "clienteID",
+      render: (cliente) =>
+        users && users.find((x) => x.userID === cliente)?.socio,
     },
     {
       title: "Acciones",
@@ -90,27 +108,22 @@ const Orders = ({ guias }) => {
     },
   ];
 
-  function checkSearch(company) {
-    return company.company.toUpperCase() === search.toUpperCase();
-  }
-
   if (!guias) {
-    return null;
+    return <Spin size="large" style={{ padding: 200 }} />;
   }
-
+  let guiasFiltered = guias;
+  if (search !== "") {
+    guiasFiltered = guiasFiltered.filter((guia) => {
+      return guia.delivery.includes(search);
+    });
+  }
   return (
     <Container>
       <Table
         title={() => (
-          <Title
-            search={search}
-            setSearch={setSearch}
-            setStatus={setStatus}
-            setDateRange={setDateRange}
-            data={guias}
-          />
+          <Title search={search} setSearch={setSearch} data={guias} />
         )}
-        dataSource={guias.map((service) => ({
+        dataSource={guiasFiltered.map((service) => ({
           key: service.id,
           ...service,
         }))}
@@ -148,6 +161,7 @@ export default compose(
         where: [
           ["estatus", "in", ["Entregado", "Regresado"]],
           ["adminID", "==", props.profile.userID],
+          ["evidence", "==", null],
         ],
       },
     ];

@@ -42,7 +42,6 @@ const EvidenciaForm = ({
       .doc(editingLocation.id)
       .update({
         evidence: data.url,
-        estatus: "Completado",
       })
       .then(() => {
         setShowModal(false);

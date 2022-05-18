@@ -10,11 +10,11 @@ import {
   CarOutlined,
   ClockCircleOutlined,
   FundOutlined,
-  SnippetsOutlined,
+  FileImageOutlined,
 } from "@ant-design/icons";
 import { Table, Tag, Tooltip, Button, Row, Col, Spin } from "antd";
 import Title from "./table-title";
-import AdminModal from "./components/admin-modal";
+import EvidenceModal from "./components/evidence-modal";
 import {
   Container,
   ComponentCard,
@@ -24,19 +24,22 @@ import {
   ComponentTitle,
 } from "./elements";
 
-const Orders = ({ users }) => {
+const Orders = ({ profile }) => {
   const [guias, setGuias] = useState(undefined);
+  const [users, setUsers] = useState(undefined);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState([]);
   const [dateRange, setDateRange] = useState(undefined);
-  const [showModal, setShowModal] = useState(false);
-  const [editingLocation, setEditingLocation] = useState(undefined);
+
+  const [parcelEvidence, setParcelEvidence] = useState(undefined);
 
   useEffect(() => {
     const db = firebase.firestore();
 
     const query = async () => {
       if (dateRange) {
+        setLoading(true);
         db.collection("Guias")
           .where(
             "fechaCreado",
@@ -57,8 +60,10 @@ const Orders = ({ users }) => {
               guiasArray.push(doc.data());
             });
             setGuias(guiasArray);
+            setLoading(false);
           });
       } else {
+        setLoading(true);
         db.collection("Guias")
           .where(
             "fechaCreado",
@@ -79,12 +84,34 @@ const Orders = ({ users }) => {
               guiasArray.push(doc.data());
             });
             setGuias(guiasArray);
+            setLoading(false);
           });
       }
     };
-
     query();
   }, [dateRange]);
+
+  useEffect(() => {
+    const db = firebase.firestore();
+
+    const query = async () => {
+      if (profile) {
+        db.collection("Users")
+          .where("adminID", "==", profile.userID)
+          .onSnapshot((querySnapshot) => {
+            const usersArray = [];
+            let data = {};
+            // eslint-disable-next-line func-names
+            querySnapshot.forEach((doc) => {
+              data = doc.data();
+              usersArray.push(doc.data());
+            });
+            setUsers(usersArray);
+          });
+      }
+    };
+    query();
+  }, [profile]);
 
   const columns = [
     {
@@ -104,8 +131,9 @@ const Orders = ({ users }) => {
     },
     {
       title: "# Orden",
-      dataIndex: "numOrden",
-      key: "numOrden",
+      dataIndex: "id",
+      key: "id",
+      render: (id) => id.substring(0, 6),
     },
     {
       title: "Numero de Factura",
@@ -116,7 +144,8 @@ const Orders = ({ users }) => {
       title: "Cliente",
       key: "clienteID",
       dataIndex: "clienteID",
-      render: (cliente) => users && users[cliente]?.socio,
+      render: (cliente) =>
+        users && users.find((x) => x.userID === cliente)?.socio,
     },
     {
       title: "Cantidad Paquetes",
@@ -131,15 +160,10 @@ const Orders = ({ users }) => {
         <Tooltip title="Evidencia">
           <Button
             type="default"
-            icon={<SnippetsOutlined />}
-            size="large"
             shape="circle"
+            icon={<FileImageOutlined />}
             disabled={!row.evidence}
-            style={{ marginRight: 10 }}
-            onClick={() => {
-              setEditingLocation(row);
-              setShowModal(true);
-            }}
+            onClick={() => setParcelEvidence(row.evidence)}
           />
         </Tooltip>
       ),
@@ -240,30 +264,34 @@ const Orders = ({ users }) => {
           </ComponentCard>
         </Col>
       </Row>
-      <Table
-        title={() => (
-          <Title
-            search={search}
-            setSearch={setSearch}
-            setStatus={setStatus}
-            setDateRange={setDateRange}
-            data={guiasFiltered}
-          />
-        )}
-        dataSource={
-          guiasFiltered &&
-          guiasFiltered.map((service) => ({
-            key: service.id,
-            ...service,
-          }))
-        }
-        columns={columns}
-      />
-      <AdminModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        editingLocation={editingLocation}
-        setEditingLocation={setEditingLocation}
+      {!loading ? (
+        <Table
+          title={() => (
+            <Title
+              search={search}
+              setSearch={setSearch}
+              setStatus={setStatus}
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+              data={guiasFiltered}
+            />
+          )}
+          dataSource={
+            guiasFiltered &&
+            guiasFiltered.map((service) => ({
+              key: service.id,
+              ...service,
+            }))
+          }
+          columns={columns}
+        />
+      ) : (
+        <Spin size="large" style={{ padding: 150 }} />
+      )}
+
+      <EvidenceModal
+        parcelEvidence={parcelEvidence}
+        setParcelEvidence={setParcelEvidence}
       />
     </Container>
   );
@@ -271,7 +299,6 @@ const Orders = ({ users }) => {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.firestore.data.Users,
     profile: state.firebase.profile,
   };
 };
@@ -281,10 +308,6 @@ export default compose(
   firestoreConnect((props) => {
     if (props.profile.userID === undefined) return [];
 
-    return [
-      {
-        collection: "Users",
-      },
-    ];
+    return [];
   })
 )(Orders);

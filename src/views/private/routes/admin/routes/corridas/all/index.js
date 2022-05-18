@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
+import shortid from "shortid";
 import moment from "moment";
-import { Table, Spin } from "antd";
+import { Table, Spin, Tag } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 
@@ -23,8 +24,9 @@ const Corridas = ({ corridas, operadores }) => {
     },
     {
       title: "Num Corrida",
-      dataIndex: "numCorrida",
-      key: "numCorrida",
+      dataIndex: "id",
+      key: "id",
+      render: (id) => id.substring(0, 6),
     },
     {
       title: "Operador",
@@ -37,6 +39,16 @@ const Corridas = ({ corridas, operadores }) => {
       key: "guias",
       dataIndex: "guias",
       render: (guiasList) => guiasList.length,
+    },
+    {
+      title: "Estatus",
+      key: "estatus",
+      dataIndex: "estatus",
+      render: (deliveries) => (
+        <Tag color="green" key={shortid.generate()}>
+          {deliveries}
+        </Tag>
+      ),
     },
   ];
 

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Select } from "antd";
 import moment from "moment";
-import { Input, Typography, DatePicker } from "antd";
+import { Input, Typography, DatePicker, Tooltip } from "antd";
 import { TitleContainer } from "./elements";
 import ExcelExport from "../ExcelExport";
 import ExcelFormater from "../excel";
@@ -12,7 +12,14 @@ const { Search } = Input;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-const TableTitle = ({ search, setSearch, setStatus, setDateRange, data }) => {
+const TableTitle = ({
+  search,
+  setSearch,
+  setStatus,
+  dateRange,
+  setDateRange,
+  data,
+}) => {
   return (
     <TitleContainer>
       <div
@@ -46,7 +53,9 @@ const TableTitle = ({ search, setSearch, setStatus, setDateRange, data }) => {
             onChange={(e) => setDateRange(e)}
             style={{ width: "50%", marginRigth: 40 }}
             placeholder={["Comienzo", "Fin"]}
-            defaultValue={[moment().subtract(7, "d"), moment()]}
+            value={
+              dateRange ? dateRange : [moment().subtract(7, "d"), moment()]
+            }
           />
         </div>
         <div>
@@ -57,7 +66,9 @@ const TableTitle = ({ search, setSearch, setStatus, setDateRange, data }) => {
             placeholder="Buscar Delivery #"
             onChange={({ target: { value } }) => setSearch(value)}
           />
-          <ExcelExport fileExport={ExcelFormater} data={data} />
+          <Tooltip placement="bottom" title={"Exportar Excel"}>
+            <ExcelExport fileExport={ExcelFormater} data={data} />
+          </Tooltip>
         </div>
       </div>
     </TitleContainer>
