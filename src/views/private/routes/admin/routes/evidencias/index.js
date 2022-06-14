@@ -19,7 +19,7 @@ const Orders = ({ guias, profile }) => {
   const [editingLocation, setEditingLocation] = useState(undefined);
 
   const [parcelEvidence, setParcelEvidence] = useState(undefined);
-
+  console.log("hehe");
   useEffect(() => {
     const db = firebase.firestore();
 
@@ -161,7 +161,6 @@ export default compose(
         where: [
           ["estatus", "in", ["Entregado", "Regresado"]],
           ["adminID", "==", props.profile.userID],
-          ["evidence", "==", null],
         ],
       },
     ];

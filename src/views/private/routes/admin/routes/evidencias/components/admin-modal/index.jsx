@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Modal,
-  Tag,
-  Typography,
-  Select,
-  Tooltip,
-  Button,
-  Upload,
-  message,
-} from "antd";
-import {
-  DeleteOutlined,
-  ArrowLeftOutlined,
-  InboxOutlined,
-} from "@ant-design/icons";
-import shortid from "shortid";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { Form, Modal, Typography, Select, Button, Upload } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
 import firebase from "firebase";
-import { firestoreConnect } from "react-redux-firebase";
 
 const { Option } = Select;
 const { Item } = Form;
 const { Text } = Typography;
 const { Dragger } = Upload;
+
+async function postData(url = "", data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
 
 const EvidenciaForm = ({
   showModal,
@@ -51,37 +51,45 @@ const EvidenciaForm = ({
       });
   };
 
-  const upload = async (evidence) => {
-    const storage = firebase.storage();
-    console.log(evidence);
-    const uploadTask = storage
-      .ref(`evidencias/${editingLocation.id}`)
-      .put(evidence.file);
+  const sendGrainger = (data) => {
+    postData(
+      "https://us-central1-garov-3c5b2.cloudfunctions.net/subirEvidenciaGarov",
+      data
+    ).then((data) => {
+      console.log(data); // JSON data parsed by `data.json()` call
+    });
+  };
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        // progress function ...
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setData({ ...data, progress });
-      },
-      (error) => {
-        // Error function ...
-        console.error(error);
-      },
-      () => {
-        // complete function ...
-        storage
-          .ref("evidencias")
-          .child(editingLocation.id)
-          .getDownloadURL()
-          .then((url) => {
-            setData({ ...data, url });
-          });
-      }
-    );
+  const upload = async (evidence) => {
+    // const storage = firebase.storage();
+    // console.log(evidence);
+    // const uploadTask = storage
+    //   .ref(`evidencias/${editingLocation.id}`)
+    //   .put(evidence.file);
+    // uploadTask.on(
+    //   "state_changed",
+    //   (snapshot) => {
+    //     // progress function ...
+    //     const progress = Math.round(
+    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    //     );
+    //     setData({ ...data, progress });
+    //   },
+    //   (error) => {
+    //     // Error function ...
+    //     console.error(error);
+    //   },
+    //   () => {
+    //     // complete function ...
+    //     storage
+    //       .ref("evidencias")
+    //       .child(editingLocation.id)
+    //       .getDownloadURL()
+    //       .then((url) => {
+    //         setData({ ...data, url });
+    //       });
+    //   }
+    // );
   };
 
   const onCancel = () => {
@@ -105,7 +113,7 @@ const EvidenciaForm = ({
       <Dragger
         name={"file"}
         multiple={true}
-        onChange={(e) => upload(e)}
+        onChange={(e) => sendGrainger({ archive: e, name: "0123456789" })}
         onRemove={() => setData({ progress: 0 })}
         maxCount={1}
         beforeUpload={() => false}

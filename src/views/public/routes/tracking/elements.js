@@ -10,6 +10,7 @@ const ElementsContainer = styled.div`
 const Menu = styled(Card)`
   background-color: white;
   left: 20px;
+  padding: 20px;
   top: 30px;
 
   .ant-card-body {

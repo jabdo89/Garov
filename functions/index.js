@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const { v4 } = require("uuid");
+const { Client } = require("node-scp");
 
 const admin = require("firebase-admin");
 const cors = require("cors")({ origin: true });
@@ -399,6 +400,7 @@ exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
         // Internal
         //Todo esto Pendiente (Preguntar a Blanca)
         estatus: "Creado",
+        eventos: [{ statusid: 1, status: "Creado", fecha: new Date() }],
         tipoServicio: "prueba",
         tipoSucursal: "prueba",
         numCliente: "432",
@@ -436,6 +438,7 @@ exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
 
 exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
   return cors(request, response, async () => {
+    functions.logger.log("Call", request);
     await db
       .collection("Guias")
       .where(
@@ -473,5 +476,71 @@ exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
       });
 
     return;
+  });
+});
+
+exports.trackingGarov = functions.https.onRequest((request, response) => {
+  return cors(request, response, async () => {
+    functions.logger.log("Call", request);
+    let info = {};
+    await db
+      .collection("Guias")
+      .where(
+        "delivery",
+        "==",
+        request.body["soapenv:Envelope"]["soapenv:Body"]["urn:trackingGuia"][
+          "delivery"
+        ]["#text"]
+      )
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          info = doc.data();
+
+          response
+            .status(200)
+            .send({ eventos: info.eventos, tracking: "url.com" });
+          return 0;
+        });
+
+        querySnapshot
+          .empty(() => {
+            response.status(400).send("Delivery no existe");
+            return 0;
+          })
+          .catch((err) => {
+            functions.logger.log("error", err);
+            response.status(400).send(err);
+            return 0;
+          });
+      });
+    return;
+  });
+});
+
+exports.subirEvidenciaGarov = functions.https.onRequest((request, response) => {
+  return cors(request, response, async () => {
+    try {
+      functions.logger.log("request", request);
+      const client = await Client({
+        host: "187.191.93.229", //remote host ip
+        port: 22, //port used for scp
+        username: "ftpGarov", //username to authenticate
+        password: "3NFt9k8TWY", //password to authenticate
+      });
+      //Archivos siempre seran pdf nombrados con el nombre del delivery a 10 digitos y la extension pdf ejemplo 6464646464.pdf
+      //En el ejemplo el archivo se renombra a test.txt y test1.txt solo para pruebas
+      functions.logger.log(request);
+      await client.uploadFile(
+        request.body.archive,
+        "/PruebasdeEntrega/" + request.body.name + ".txt"
+      ); //Carpeta destino siempre sera /PruebasdeEntrega/
+      //Aqui iria la carga de todos los archivos pendientes
+      client.close(); // Cerrar conexion
+      response.status(400).send("Success");
+    } catch (e) {
+      functions.logger.log("Error controlado: ", e);
+      response.status(400).send("Error");
+    }
   });
 });

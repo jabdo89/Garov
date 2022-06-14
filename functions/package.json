@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1",
+    "node-scp": "^0.0.17",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.12"
   },

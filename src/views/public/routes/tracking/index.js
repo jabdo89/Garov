@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Input, Button, Typography, message } from "antd";
 import PublicLayout from "../../../../layouts/public";
 import moment from "moment";
+import firebase from "firebase";
 import { useFirebase } from "react-redux-firebase";
 import { ElementsContainer, Menu } from "./elements";
 import useQueryParam from "./hooks";
@@ -10,21 +11,66 @@ const { Title, Paragraph } = Typography;
 const { Search } = Input;
 
 const Tracking = () => {
-  const [db, setDb] = useState();
-  const [service, setService] = useQueryParam("service");
+  const [service, setService] = useQueryParam("delivery");
   const [locationData, setLocationData] = useState();
   const [locationTrackerRef, setLocationTrackerRef] = useState();
   const [deliveryData, setDeliveryData] = useState();
   const [serviceData, setServiceData] = useState();
   const [deliveryIndex, setDeliveryIndex] = useState();
-
-  const firebase = useFirebase();
-
+  console.log(service);
   useEffect(() => {
-    if (firebase) {
-      setDb(firebase.database());
+    let temp;
+    if (service) {
+      firebase
+        .firestore()
+        .collection("Guias")
+        .where("delivery", "==", service)
+        .get()
+        // eslint-disable-next-line consistent-return
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            setLocationTrackerRef();
+            setLocationData();
+            setService("");
+          }
+          snapshot.forEach((doc) => {
+            temp = doc.data();
+            setServiceData(temp);
+          });
+        });
     }
-  }, [firebase]);
+  }, []);
+  console.log(locationTrackerRef);
+  useEffect(() => {
+    if (locationTrackerRef) {
+      firebase
+        .firestore()
+        .collection("Guias")
+        .where("delivery", "==", service)
+        .get()
+        // eslint-disable-next-line consistent-return
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            setLocationTrackerRef();
+            setLocationData();
+            setService("");
+          }
+          snapshot.forEach((doc) => {
+            locationTrackerRef.on("value", (snapshot) => {
+              if (!snapshot.exists()) {
+                setLocationTrackerRef();
+                setLocationData();
+                message.warning("El código es inválido");
+                setService("");
+              } else {
+                const data = snapshot.val();
+                setLocationData(data);
+              }
+            });
+          });
+        });
+    }
+  }, [locationTrackerRef]);
 
   const establishTracker = (value) => {
     let temp;
@@ -44,8 +90,7 @@ const Tracking = () => {
             const ref = doc.id;
             temp = doc.data();
             setServiceData(temp);
-            setLocationTrackerRef(ref);
-            setService(doc.id);
+            setService(temp.delivery);
             setLocationData(temp);
           });
         });
