@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
 import {
@@ -11,9 +11,6 @@ import {
   Typography,
   Select,
   Radio,
-  Table,
-  Tag,
-  Tooltip,
 } from "antd";
 import firebase from "firebase";
 import shortid from "shortid";
@@ -24,17 +21,18 @@ import { Container, Row, Col } from "./elements";
 
 const { Option } = Select;
 const { Item } = Form;
-const { Title, Paragraph, Text } = Typography;
-const { Password } = Input;
+const { Title, Text } = Typography;
 
 const NewPlanta = ({
   history,
   profile,
   servicios,
-  serviciosObj,
   unidades,
-  unidadesObj,
+  clientes,
+  clientesObj,
 }) => {
+  const [socio, setSocio] = useState(null);
+
   const onFinish = (values) => {
     const data = values;
     ["preferido"].forEach((e) => {
@@ -105,15 +103,42 @@ const NewPlanta = ({
                     { required: true, message: "Ingresa nombre de Socio" },
                   ]}
                 >
-                  <Input placeholder="Socio" size="large" />
+                  <Select
+                    placeholder="Socio"
+                    size="large"
+                    onChange={(value) => setSocio(value)}
+                  >
+                    {clientes &&
+                      clientes.map((data) => (
+                        <Option
+                          key={data.id}
+                          value={data.id}
+                          label={data.socio}
+                        >
+                          {data.socio}
+                        </Option>
+                      ))}
+                  </Select>
                 </Item>
                 <Item
-                  label={<Text strong>Razon Social</Text>}
-                  name="razonSocial"
+                  label={<Text strong>Cliente Final</Text>}
+                  name="clienteFinal"
                   style={{ width: "23%" }}
-                  rules={[{ required: true, message: "Ingresa Razon Social" }]}
+                  rules={[{ required: true, message: "Ingresa Cliente Final" }]}
                 >
-                  <Input placeholder="Razon Social" size="large" />
+                  <Select placeholder="Socio" size="large">
+                    {socio &&
+                      clientesObj[socio].clientes &&
+                      clientesObj[socio]?.clientes.map((data) => (
+                        <Option
+                          key={data.numCliente}
+                          value={data.cliente}
+                          label={data.cliente}
+                        >
+                          {data.cliente}
+                        </Option>
+                      ))}
+                  </Select>
                 </Item>
                 <Item
                   label={<Text strong>Preferido</Text>}
@@ -261,6 +286,8 @@ const mapStateToProps = (state) => {
     serviciosObj: state.firestore.data.Servicios,
     unidadesObj: state.firestore.data.Unidades,
     profile: state.firebase.profile,
+    clientes: state.firestore.ordered.Users,
+    clientesObj: state.firestore.data.Users,
   };
 };
 
@@ -277,6 +304,10 @@ export default compose(
       {
         collection: "Unidades",
         where: [["adminID", "==", props.profile.userID]],
+      },
+      {
+        collection: "Users",
+        where: [["rol", "==", "Company"]],
       },
     ];
   }),

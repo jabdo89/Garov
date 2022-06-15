@@ -44,6 +44,7 @@ const NewGuia = ({ history, profile }) => {
             ...values,
             email: values.email,
             adminID: profile.userID,
+            clientes: [],
             rol: "Company",
           })
           .then(() => {

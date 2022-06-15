@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import shortid from "shortid";
-import { FileImageOutlined } from "@ant-design/icons";
-import { Table, Tag, Tooltip, Button } from "antd";
+import { Table, Tag } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 
@@ -14,6 +12,7 @@ const Paquetes = ({ paquetes }) => {
       title: "Paquete",
       key: "paquete",
       dataIndex: "paquete",
+      render: (paquete) => <Tag color="green"> {paquete}</Tag>,
     },
   ];
 

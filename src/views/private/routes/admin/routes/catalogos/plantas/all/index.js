@@ -22,9 +22,9 @@ const Plantas = ({ plantas }) => {
       key: "nota",
     },
     {
-      title: "Socio",
-      dataIndex: "socio",
-      key: "socio",
+      title: "Cliente Final",
+      dataIndex: "clienteFinal",
+      key: "clienteFinal",
     },
     {
       title: "Contacto",
@@ -45,7 +45,7 @@ const Plantas = ({ plantas }) => {
   return (
     <Container>
       <Table
-        title={() => <Title data={plantas} />}
+        title={() => <Title />}
         dataSource={plantas.map((service) => ({
           key: service.id,
           ...service,
