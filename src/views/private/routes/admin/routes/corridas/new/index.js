@@ -48,13 +48,13 @@ const NewCorrida = ({
   const [addingGuias, setAddingGuias] = useState([]);
 
   // Display Fields
-  const [operadorFields, setOperadorFields] = useState({
-    licencia: "Donde esta?",
-  });
   const [unidadesFields, setUnidadesFields] = useState({
     polizaSeguro: "",
     tarjetaCirculacion: "",
   });
+
+  const [numCorrida] = useState(shortid.generate());
+
   // Functions
 
   const onFinish = (values) => {
@@ -71,12 +71,12 @@ const NewCorrida = ({
     }
 
     const db = firebase.firestore();
-    const id = shortid.generate();
+
     db.collection("Corridas")
-      .doc(id)
+      .doc(numCorrida)
       .set({
         ...data,
-        id,
+        id: numCorrida,
         guias: guiasArray,
         estatus: "activo",
         fecha: new Date(),
@@ -89,7 +89,6 @@ const NewCorrida = ({
             .update({
               estatus: "En Corrida",
             });
-          console.log("entro");
         }
         history.push("/corridas/all");
       })
@@ -105,30 +104,21 @@ const NewCorrida = ({
       key: "estatus",
       dataIndex: "estatus",
     },
-    {
-      title: "# Guia",
-      dataIndex: "numGuia",
-      key: "numGuia",
-      render: (tipo) => (
-        <Tag color="blue" key={shortid.generate()}>
-          {tipo}
-        </Tag>
-      ),
-    },
+
     {
       title: "# Factura",
-      dataIndex: "numFactura",
-      key: "numFactura",
+      dataIndex: "nFactura",
+      key: "nFactura",
     },
     {
       title: "# Delivery",
-      dataIndex: "numDelivery",
-      key: "numDelivery",
-    },
-    {
-      title: "# Orden",
-      dataIndex: "numOrden",
-      key: "numOrden",
+      dataIndex: "delivery",
+      key: "delivery",
+      render: (delivery) => (
+        <Tag color="blue" key={shortid.generate()}>
+          {delivery}
+        </Tag>
+      ),
     },
     {
       title: "# Paquetes",
@@ -277,7 +267,7 @@ const NewCorrida = ({
                     { required: true, message: "Ingresa numero de corrida" },
                   ]}
                 >
-                  <Input placeholder="Numero de Corrida" size="large" />
+                  <Text>{numCorrida}</Text>
                 </Item>
                 <Item
                   label={<Text strong>Tarjeta de Circulacion</Text>}
@@ -291,12 +281,6 @@ const NewCorrida = ({
                 >
                   <Text>{unidadesFields.polizaSeguro}</Text>
                 </Item>
-                {/* <Item
-                  label={<Text strong>Licencia de Manejo</Text>}
-                  style={{ width: "20%" }}
-                >
-                  <Text>{operadorFields.licencia}</Text>
-                </Item> */}
               </Row>
             </Col>
             <Divider style={{ borderTop: "grey" }} orientation="right">

@@ -43,7 +43,7 @@ const TableTitle = ({
             onChange={(e) => setStatus(e)}
           >
             <Option key={"Creado"}>Creado</Option>
-            <Option key={"Documentado"}>Escaneado</Option>
+            <Option key={"Escaneado"}>Escaneado</Option>
             <Option key={"Documentado"}>Documentado</Option>
             <Option key={"En Corrida"}>En Corrida</Option>
             <Option key={"Entregado"}>Entregado</Option>

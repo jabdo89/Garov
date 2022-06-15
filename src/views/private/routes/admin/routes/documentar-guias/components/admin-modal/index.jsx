@@ -28,7 +28,6 @@ const AdminForm = ({
   editingLocation,
   setEditingLocation,
   users,
-  unidades,
   servicios,
   paquetes,
   plantas,
@@ -47,10 +46,9 @@ const AdminForm = ({
     cantPaquetes: null,
     peso: null,
     tipoDePaquete: null,
-    unidad: null,
   });
   const [packages, setPackages] = useState([]);
-  console.log(inputsModified);
+
   //Functions
   const onFinish = () => {
     const db = firebase.firestore();
@@ -94,11 +92,6 @@ const AdminForm = ({
           {tipo}
         </Tag>
       ),
-    },
-    {
-      title: "Unidad",
-      dataIndex: "unidad",
-      key: "unidad",
     },
     {
       title: "Borrar",
@@ -167,6 +160,12 @@ const AdminForm = ({
             >
               <Select
                 placeholder="Nombre de Planta"
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 size="large"
                 onChange={(value) =>
                   setInputsModified({
@@ -192,6 +191,12 @@ const AdminForm = ({
               <Select
                 placeholder="Tipo de Servicio"
                 size="large"
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 onChange={(value) =>
                   setInputsModified({
                     ...inputsModified,
@@ -358,6 +363,13 @@ const AdminForm = ({
                   <Select
                     placeholder="Tipo de Paquete"
                     size="large"
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
                     onChange={(value) =>
                       setPackageadding({
                         ...packageAdding,
@@ -377,33 +389,6 @@ const AdminForm = ({
                       ))}
                   </Select>
                 </Item>
-                <Item
-                  value={packageAdding.unidad}
-                  label={<Text strong>Unidad</Text>}
-                  rules={[{ required: true, message: "Ingrese Unidades" }]}
-                >
-                  <Select
-                    placeholder="Unidad"
-                    size="large"
-                    onChange={(value) =>
-                      setPackageadding({
-                        ...packageAdding,
-                        unidad: value,
-                      })
-                    }
-                  >
-                    {unidades &&
-                      unidades.map((data) => (
-                        <Option
-                          key={data.id}
-                          value={data.id}
-                          label={data.tipoUnidad}
-                        >
-                          {data.tipoUnidad}
-                        </Option>
-                      ))}
-                  </Select>
-                </Item>
                 <Button
                   style={{
                     marginLeft: "auto",
@@ -413,12 +398,16 @@ const AdminForm = ({
                   }}
                   type="primary"
                   size="large"
+                  disabled={
+                    packageAdding.cantPaquetes === null ||
+                    packageAdding.tipoDePaquete === null ||
+                    packageAdding.peso === null
+                  }
                   onClick={() => {
                     setPackageadding({
                       cantPaquetes: null,
                       peso: null,
                       tipoDePaquete: null,
-                      unidad: null,
                     });
                     setPackages([
                       ...packages,
@@ -444,7 +433,6 @@ const mapStateToProps = (state) => {
   return {
     plantas: state.firestore.ordered.Plantas,
     servicios: state.firestore.ordered.Servicios,
-    unidades: state.firestore.ordered.Unidades,
     paquetes: state.firestore.ordered.Paquetes,
     users: state.firestore.ordered.Users,
     profile: state.firebase.profile,
@@ -460,10 +448,6 @@ export default compose(
       {
         collection: "Users",
         where: [["rol", "==", "User"]],
-      },
-      {
-        collection: "Unidades",
-        where: [["adminID", "==", props.profile.userID]],
       },
       {
         collection: "Paquetes",

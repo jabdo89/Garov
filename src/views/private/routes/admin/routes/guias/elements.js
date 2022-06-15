@@ -50,10 +50,10 @@ const ComponentDescription = styled(Text)`
 `;
 
 const IconDiv = styled.div`
-  background-color: rgba(82, 178, 102, 0.46);
+  background-color: #add8e6;
   border-radius: 5px;
   font-size: 25px;
-  color: #52b266;
+  color: #2f7ae5;
   padding: 0px 7px;
 `;
 

@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import shortid from "shortid";
 import moment from "moment";
-import { Table, Spin, Tag } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { Table, Spin, Tag, Button, Tooltip } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
+import Modal from "./components/detail-modal";
 
 const Corridas = ({ corridas, operadores }) => {
   const [search, setSearch] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [editingLocation, setEditingLocation] = useState(undefined);
 
   if (!operadores) {
     return <Spin size="large" style={{ padding: 200 }} />;
@@ -50,6 +55,25 @@ const Corridas = ({ corridas, operadores }) => {
         </Tag>
       ),
     },
+    {
+      title: "Detalle",
+      key: "action",
+      // eslint-disable-next-line react/prop-types
+      render: (row) => (
+        <Tooltip title="Detalle">
+          <Button
+            type="primary"
+            icon={<InfoCircleOutlined />}
+            shape="circle"
+            style={{ marginRight: 10 }}
+            onClick={() => {
+              setEditingLocation(row);
+              setShowModal(true);
+            }}
+          />
+        </Tooltip>
+      ),
+    },
   ];
 
   if (!corridas) {
@@ -78,6 +102,12 @@ const Corridas = ({ corridas, operadores }) => {
           ...service,
         }))}
         columns={columns}
+      />
+      <Modal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        editingLocation={editingLocation}
+        setEditingLocation={setEditingLocation}
       />
     </Container>
   );

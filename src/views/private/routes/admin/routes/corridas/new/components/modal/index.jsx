@@ -1,26 +1,12 @@
-import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Modal,
-  Table,
-  Tag,
-  Typography,
-  Select,
-  Tooltip,
-  Button,
-  InputNumber,
-} from "antd";
-import { DeleteOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import shortid from "shortid";
+import React, { useState } from "react";
+import { Form, Modal, Typography, Select, Button } from "antd";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import firebase from "firebase";
 import { firestoreConnect } from "react-redux-firebase";
 
 const { Option } = Select;
 const { Item } = Form;
 const { Text } = Typography;
-const { Title } = Typography;
 
 const GuiaModal = ({
   showModal,
@@ -49,6 +35,7 @@ const GuiaModal = ({
   if (guias === null) {
     return null;
   }
+
   return (
     <Modal
       title={<Text>Llenar Campos Faltantes </Text>}

@@ -137,7 +137,7 @@ const Orders = ({ profile }) => {
       key: "estatus",
       dataIndex: "estatus",
       render: (deliveries) => (
-        <Tag color="green" key={shortid.generate()}>
+        <Tag color="blue" key={shortid.generate()}>
           {deliveries}
         </Tag>
       ),
@@ -258,7 +258,7 @@ const Orders = ({ profile }) => {
               </Col>
               <Col flex="20px">
                 <IconDiv>
-                  <CarOutlined />
+                  <ClockCircleOutlined />
                 </IconDiv>
               </Col>
             </Row>
@@ -276,7 +276,7 @@ const Orders = ({ profile }) => {
               </Col>
               <Col flex="20px">
                 <IconDiv>
-                  <ClockCircleOutlined />
+                  <CarOutlined />
                 </IconDiv>
               </Col>
             </Row>
