@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Modal, Table, Typography, Button, Input } from "antd";
+import { Form, Modal, Table, Typography, Button, Input, Alert } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import firebase from "firebase";
 
@@ -15,9 +15,13 @@ const AdminForm = ({
   users,
 }) => {
   const [step, setStep] = useState(0);
-
+  const [error, setError] = useState("");
   //Functions
   const onFinish = (values) => {
+    if (editingLocation?.clientes.some((e) => e.cliente === values.cliente)) {
+      setError("Cliente ya Existe");
+      return;
+    }
     const db = firebase.firestore();
     const array = editingLocation?.clientes;
     array.push(values);
@@ -26,12 +30,14 @@ const AdminForm = ({
       .update({ clientes: array })
       .then(async () => {
         setStep(0);
+        setError("");
       });
   };
 
   const onCancel = () => {
     setShowModal(false);
     setEditingLocation(undefined);
+    setError("");
   };
 
   if (users === null) {
@@ -124,6 +130,7 @@ const AdminForm = ({
           >
             <Input placeholder="Numero" size="large" />
           </Item>
+          <Text style={{ color: "red" }}>{error}</Text>
           <Item style={{ display: "block", width: "100%", marginTop: 20 }}>
             <Button
               style={{ marginLeft: "auto", display: "block" }}

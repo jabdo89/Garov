@@ -14,7 +14,7 @@ const Plantas = ({ plantas }) => {
       title: "Planta",
       key: "planta",
       dataIndex: "planta",
-      render: (planta) => <Tag color="green">{planta}</Tag>,
+      render: (planta) => <Tag color="blue">{planta}</Tag>,
     },
     {
       title: "Horario Entrega",

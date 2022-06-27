@@ -4,7 +4,7 @@ import firebase from "firebase";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import shortid from "shortid";
-import { EditOutlined } from "@ant-design/icons";
+import { FormOutlined } from "@ant-design/icons";
 import { Table, Tag, Tooltip, Button, Spin } from "antd";
 import Title from "./table-title";
 import AdminModal from "./components/admin-modal";
@@ -83,7 +83,7 @@ const Orders = ({ guias, profile }) => {
         <Tooltip title="Documentar">
           <Button
             type="primary"
-            icon={<EditOutlined />}
+            icon={<FormOutlined />}
             shape="circle"
             style={{ marginRight: 10 }}
             onClick={() => {

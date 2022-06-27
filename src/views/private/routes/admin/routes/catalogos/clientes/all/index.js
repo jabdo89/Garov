@@ -24,7 +24,7 @@ const Clientes = ({ clientes }) => {
       dataIndex: "socio",
       key: "socio",
       render: (socio) => (
-        <Tag color="green" key={shortid.generate()}>
+        <Tag color="blue" key={shortid.generate()}>
           {socio}
         </Tag>
       ),

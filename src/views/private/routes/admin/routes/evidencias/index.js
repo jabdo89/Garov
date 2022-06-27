@@ -48,7 +48,7 @@ const Orders = ({ guias, profile }) => {
       key: "estatus",
       dataIndex: "estatus",
       render: (deliveries) => (
-        <Tag color="green" key={shortid.generate()}>
+        <Tag color="blue" key={shortid.generate()}>
           {deliveries}
         </Tag>
       ),

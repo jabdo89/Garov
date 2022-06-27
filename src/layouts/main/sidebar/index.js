@@ -35,7 +35,7 @@ const Sidebar = ({ history, collapsed, onCollapse, profile }) => {
     routes = (
       <>
         <Item icon={<FormOutlined />} key="guias">
-          <Link to="/guias">Guias</Link>
+          <Link to="/guias/all">Guias</Link>
         </Item>
         <Item icon={<UnorderedListOutlined />} key="documentar">
           <Link to="/documentar">Documentar Guias</Link>
@@ -46,8 +46,8 @@ const Sidebar = ({ history, collapsed, onCollapse, profile }) => {
         <Item icon={<UsergroupAddOutlined />} key="operadores/all">
           <Link to="/operadores/all">Operadores</Link>
         </Item>
-        <Item icon={<FileSearchOutlined />} key="evidencias">
-          <Link to="/evidencias">Evidencias</Link>
+        <Item icon={<FileSearchOutlined />} key="regresados">
+          <Link to="/regresados">Regresados</Link>
         </Item>
         <SubMenu icon={<UserOutlined />} title="Catalogos">
           <Item icon={<UserAddOutlined />} key="catalogos/clientes/all">

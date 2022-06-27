@@ -15,7 +15,7 @@ const TipoGuias = ({ tipoGuias }) => {
       key: "tipoGuia",
       dataIndex: "tipoGuia",
       render: (tipoGuia) => (
-        <Tag color="green" key={shortid.generate()}>
+        <Tag color="blue" key={shortid.generate()}>
           {tipoGuia}
         </Tag>
       ),

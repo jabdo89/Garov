@@ -12,7 +12,7 @@ const Paquetes = ({ paquetes }) => {
       title: "Paquete",
       key: "paquete",
       dataIndex: "paquete",
-      render: (paquete) => <Tag color="green"> {paquete}</Tag>,
+      render: (paquete) => <Tag color="blue"> {paquete}</Tag>,
     },
   ];
 

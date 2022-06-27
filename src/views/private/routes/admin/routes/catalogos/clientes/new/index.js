@@ -9,12 +9,7 @@ import {
   Button,
   Typography,
   Select,
-  Radio,
-  Table,
-  Tag,
-  Tooltip,
 } from "antd";
-import shortid from "shortid";
 import firebase from "firebase";
 import { secondConfig } from "../../../../../../../../redux/config";
 import { HomeOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -22,10 +17,8 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { Container, Row, Col } from "./elements";
 
-const { Option } = Select;
 const { Item } = Form;
-const { Title, Paragraph, Text } = Typography;
-const { Password } = Input;
+const { Title, Text } = Typography;
 
 const NewGuia = ({ history, profile }) => {
   const onFinish = (values) => {

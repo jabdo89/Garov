@@ -14,7 +14,7 @@ const Sucursales = ({ sucursales }) => {
       title: "Sucursal",
       key: "sucursal",
       dataIndex: "sucursal",
-      render: (sucursal) => <Tag color="green">{sucursal}</Tag>,
+      render: (sucursal) => <Tag color="blue">{sucursal}</Tag>,
     },
     {
       title: "Codigo Postal",

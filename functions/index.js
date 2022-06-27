@@ -401,21 +401,6 @@ exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
         //Todo esto Pendiente (Preguntar a Blanca)
         estatus: "Creado",
         eventos: [{ statusid: 1, status: "Creado", fecha: new Date() }],
-        tipoServicio: "prueba",
-        tipoSucursal: "prueba",
-        numCliente: "432",
-        planta: "prueba",
-        preguia: "4",
-        shipBranch: "4",
-        numGuia: "5432",
-        numOrden: "432",
-        importe: "4",
-        comision: "4",
-        costoEstadias: "4",
-        costoFletes: "4",
-        costoReparto: "4",
-        costoTotal: "4",
-        costosManiobras: "4",
       })
       .then(() => {
         response

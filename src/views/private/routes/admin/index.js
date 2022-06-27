@@ -10,6 +10,11 @@ const Guias = Loadable({
   loading: TopBarProgress,
 });
 
+const GuiasNew = Loadable({
+  loader: () => import("./routes/guias/new"),
+  loading: TopBarProgress,
+});
+
 /* webpackChunkName: "Operadores" */
 const OperadoresNuevo = Loadable({
   loader: () => import("./routes/operadores/new"),
@@ -41,6 +46,12 @@ const CorridasNew = Loadable({
 /* webpackChunkName: "Documentar Guias" */
 const Evidencias = Loadable({
   loader: () => import("./routes/evidencias"),
+  loading: TopBarProgress,
+});
+
+/* webpackChunkName: "Regresados" */
+const Regresados = Loadable({
+  loader: () => import("./routes/regresados"),
   loading: TopBarProgress,
 });
 
@@ -117,8 +128,11 @@ const TipoGuiasNew = Loadable({
 
 const Dash = () => (
   <Switch>
-    <Route path="/guias">
+    <Route path="/guias/all">
       <Guias />
+    </Route>
+    <Route path="/guias/new">
+      <GuiasNew />
     </Route>
     <Route path="/corridas/all">
       <Corridas />
@@ -135,8 +149,11 @@ const Dash = () => (
     <Route path="/documentar">
       <DocumentarGuias />
     </Route>
-    <Route path="/evidencias">
+    {/* <Route path="/evidencias">
       <Evidencias />
+    </Route> */}
+    <Route path="/regresados">
+      <Regresados />
     </Route>
 
     <Route path="/catalogos/clientes/all">
@@ -181,7 +198,7 @@ const Dash = () => (
     <Route path="/catalogos/guias/new">
       <TipoGuiasNew />
     </Route>
-    <Redirect to="/guias" />
+    <Redirect to="/guias/all" />
   </Switch>
 );
 

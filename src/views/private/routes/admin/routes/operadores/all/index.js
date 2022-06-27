@@ -25,7 +25,7 @@ const Operators = ({ operadores }) => {
       key: "nombre",
       dataIndex: "nombre",
       render: (name) => (
-        <Tag color="green" key={shortid.generate()}>
+        <Tag color="blue" key={shortid.generate()}>
           {name}
         </Tag>
       ),

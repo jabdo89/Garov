@@ -1,26 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Modal,
-  Table,
-  Tag,
-  Typography,
-  Select,
-  Tooltip,
-  Button,
-  InputNumber,
-} from "antd";
+import { Modal, Table, Tag, Typography } from "antd";
 import moment from "moment";
-import { DeleteOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import shortid from "shortid";
-import { connect } from "react-redux";
-import { compose } from "redux";
 import firebase from "firebase";
-import TableTitle from "./table-title";
-import { firestoreConnect } from "react-redux-firebase";
 
-const { Option } = Select;
-const { Item } = Form;
 const { Text } = Typography;
 const { Title } = Typography;
 

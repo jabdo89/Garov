@@ -24,25 +24,25 @@ import {
   ComponentTitle,
 } from "./elements";
 
-async function postData(url = "", data = {}) {
-  // Default options are marked with *
-  const response = await fetch(url, {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    mode: "cors", // no-cors, *cors, same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: "same-origin", // include, *same-origin, omit
-    headers: {
-      "Content-Type": "application/json",
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    redirect: "follow", // manual, *follow, error
-    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    body: JSON.stringify(data), // body data type must match "Content-Type" header
-  });
-  return response.json(); // parses JSON response into native JavaScript objects
-}
+// async function postData(url = "", data = {}) {
+//   // Default options are marked with *
+//   const response = await fetch(url, {
+//     method: "POST", // *GET, POST, PUT, DELETE, etc.
+//     mode: "cors", // no-cors, *cors, same-origin
+//     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+//     credentials: "same-origin", // include, *same-origin, omit
+//     headers: {
+//       "Content-Type": "application/json",
+//       // 'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//     redirect: "follow", // manual, *follow, error
+//     referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+//     body: JSON.stringify(data), // body data type must match "Content-Type" header
+//   });
+//   return response.json(); // parses JSON response into native JavaScript objects
+// }
 
-const Orders = ({ profile }) => {
+const Orders = ({ history, profile }) => {
   const [guias, setGuias] = useState(undefined);
   const [users, setUsers] = useState(undefined);
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,6 @@ const Orders = ({ profile }) => {
 
     const query = async () => {
       if (dateRange) {
-        setLoading(true);
         db.collection("Guias")
           .where(
             "fechaCreado",
@@ -78,10 +77,8 @@ const Orders = ({ profile }) => {
               guiasArray.push(doc.data());
             });
             setGuias(guiasArray);
-            setLoading(false);
           });
       } else {
-        setLoading(true);
         db.collection("Guias")
           .where(
             "fechaCreado",
@@ -102,10 +99,10 @@ const Orders = ({ profile }) => {
               guiasArray.push(doc.data());
             });
             setGuias(guiasArray);
-            setLoading(false);
           });
       }
     };
+
     query();
   }, [dateRange]);
 
@@ -168,7 +165,15 @@ const Orders = ({ profile }) => {
     {
       title: "Cantidad Paquetes",
       key: "cantidadPqte",
+      width: "10%",
       dataIndex: "cantidadPqte",
+    },
+    {
+      title: "Paquetes Escaneados",
+      key: "escaneadas",
+      width: "10%",
+      dataIndex: "escaneadas",
+      render: (escaneadas) => (escaneadas ? escaneadas.length : 0),
     },
     {
       title: "Evidencia",
@@ -180,8 +185,8 @@ const Orders = ({ profile }) => {
             type="default"
             shape="circle"
             icon={<FileImageOutlined />}
-            disabled={!row.evidence}
-            onClick={() => setParcelEvidence(row.evidence)}
+            disabled={!row.preEvidencia}
+            onClick={() => setParcelEvidence(row.preEvidencia)}
           />
         </Tooltip>
       ),
@@ -212,100 +217,106 @@ const Orders = ({ profile }) => {
     });
   }
 
-  const fetchTracking = () => {
-    console.log("hi");
-    postData(
-      "https://us-central1-garov-3c5b2.cloudfunctions.net/trackingGarov",
-      {
-        "soapenv:Envelope": {
-          "soapenv:Body": {
-            "urn:trackingGuia": { delivery: { "#text": "6549908896" } },
-          },
-        },
-      }
-    )
-      .then((data) => {
-        console.log(data); // JSON data parsed by `data.json()` call
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // const fetchTracking = () => {
+  //   console.log("hi");
+  //   postData(
+  //     "https://us-central1-garov-3c5b2.cloudfunctions.net/trackingGarov",
+  //     {
+  //       "soapenv:Envelope": {
+  //         "soapenv:Body": {
+  //           "urn:trackingGuia": { delivery: { "#text": "6549908896" } },
+  //         },
+  //       },
+  //     }
+  //   )
+  //     .then((data) => {
+  //       console.log(data); // JSON data parsed by `data.json()` call
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+  console.log(loading);
   return (
     <Container>
-      <Button onClick={() => fetchTracking()}> Prueba </Button>
-      <Row justify="space-between">
-        <Col xs={24} sm={12} md={12} lg={6}>
-          <ComponentCard>
-            <Row>
-              <Col flex="auto">
-                <ComponentSubtitle>{creadas.length}</ComponentSubtitle>
-              </Col>
-              <Col flex="20px">
-                <IconDiv>
-                  <CodeSandboxOutlined />
-                </IconDiv>
-              </Col>
-            </Row>
-            <ComponentTitle>Creados/Escaneados</ComponentTitle>
-          </ComponentCard>
-        </Col>
-        <Col xs={24} sm={12} md={12} lg={6}>
-          <ComponentCard>
-            <Row>
-              <Col flex="auto">
-                <ComponentSubtitle>{documentado.length}</ComponentSubtitle>
-              </Col>
-              <Col flex="20px">
-                <IconDiv>
-                  <ClockCircleOutlined />
-                </IconDiv>
-              </Col>
-            </Row>
-            <ComponentTitle>Documentado</ComponentTitle>
-          </ComponentCard>
-        </Col>
-        <Col xs={24} sm={12} md={12} lg={6}>
-          <ComponentCard>
-            <Row>
-              <Col flex="auto">
-                <ComponentSubtitle>
-                  {enCorrida.length}
-                  <ComponentDescription></ComponentDescription>
-                </ComponentSubtitle>
-              </Col>
-              <Col flex="20px">
-                <IconDiv>
-                  <CarOutlined />
-                </IconDiv>
-              </Col>
-            </Row>
-            <ComponentTitle>En Corrida</ComponentTitle>
-          </ComponentCard>
-        </Col>
-        <Col xs={24} sm={12} md={12} lg={6}>
-          <ComponentCard>
-            <Row>
-              <Col flex="auto">
-                <ComponentSubtitle>
-                  {completados.length}
-                  <ComponentDescription></ComponentDescription>
-                </ComponentSubtitle>
-              </Col>
-              <Col flex="20px">
-                <IconDiv>
-                  <FundOutlined />
-                </IconDiv>
-              </Col>
-            </Row>
-            <ComponentTitle>Completados</ComponentTitle>
-          </ComponentCard>
-        </Col>
-      </Row>
+      {/* <Button onClick={() => fetchTracking()}> Prueba </Button> */}
+      {!loading ? (
+        <Row justify="space-between">
+          <Col xs={24} sm={12} md={12} lg={6}>
+            <ComponentCard>
+              <Row>
+                <Col flex="auto">
+                  <ComponentSubtitle>{creadas.length}</ComponentSubtitle>
+                </Col>
+                <Col flex="20px">
+                  <IconDiv>
+                    <CodeSandboxOutlined />
+                  </IconDiv>
+                </Col>
+              </Row>
+              <ComponentTitle>Creados/Escaneados</ComponentTitle>
+            </ComponentCard>
+          </Col>
+          <Col xs={24} sm={12} md={12} lg={6}>
+            <ComponentCard>
+              <Row>
+                <Col flex="auto">
+                  <ComponentSubtitle>{documentado.length}</ComponentSubtitle>
+                </Col>
+                <Col flex="20px">
+                  <IconDiv>
+                    <ClockCircleOutlined />
+                  </IconDiv>
+                </Col>
+              </Row>
+              <ComponentTitle>Documentado</ComponentTitle>
+            </ComponentCard>
+          </Col>
+          <Col xs={24} sm={12} md={12} lg={6}>
+            <ComponentCard>
+              <Row>
+                <Col flex="auto">
+                  <ComponentSubtitle>
+                    {enCorrida.length}
+                    <ComponentDescription></ComponentDescription>
+                  </ComponentSubtitle>
+                </Col>
+                <Col flex="20px">
+                  <IconDiv>
+                    <CarOutlined />
+                  </IconDiv>
+                </Col>
+              </Row>
+              <ComponentTitle>En Corrida</ComponentTitle>
+            </ComponentCard>
+          </Col>
+          <Col xs={24} sm={12} md={12} lg={6}>
+            <ComponentCard>
+              <Row>
+                <Col flex="auto">
+                  <ComponentSubtitle>
+                    {completados.length}
+                    <ComponentDescription></ComponentDescription>
+                  </ComponentSubtitle>
+                </Col>
+                <Col flex="20px">
+                  <IconDiv>
+                    <FundOutlined />
+                  </IconDiv>
+                </Col>
+              </Row>
+              <ComponentTitle>Completados</ComponentTitle>
+            </ComponentCard>
+          </Col>
+        </Row>
+      ) : (
+        <Spin size="large" style={{ padding: 150 }} />
+      )}
       {!loading ? (
         <Table
           title={() => (
             <Title
+              history={history}
               search={search}
               setSearch={setSearch}
               setStatus={setStatus}
