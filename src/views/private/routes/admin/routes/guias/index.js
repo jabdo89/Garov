@@ -205,7 +205,9 @@ const Orders = ({ history, profile }) => {
     (guia) => guia.estatus === "Entregado" || guia.estatus === "Regresado"
   );
 
-  let guiasFiltered = guias;
+  let guiasFiltered = guias
+    .slice()
+    .sort((a, b) => b.fechaCreado - a.fechaCreado);
   if (status.length !== 0) {
     guiasFiltered = guiasFiltered.filter((guia) => {
       return status.includes(guia.estatus);

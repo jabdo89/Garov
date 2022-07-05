@@ -30,13 +30,16 @@ const AdminForm = ({
   users,
   servicios,
   paquetes,
-  plantas,
+  serviciosObj,
 }) => {
   const [step, setStep] = useState(0);
   // Form Info
+
+  const [servicio, setServicio] = useState(null);
+
   const [inputsModified, setInputsModified] = useState({
-    planta: null,
     tipoDeServicio: null,
+    tipoDeDestino: null,
     importe: null,
   });
 
@@ -52,9 +55,16 @@ const AdminForm = ({
   //Functions
   const onFinish = () => {
     const db = firebase.firestore();
+    const tempArray = editingLocation.eventos;
+    tempArray.push({ statusid: 3, status: "Documentado", fecha: new Date() });
     db.collection("Guias")
       .doc(editingLocation.id)
-      .update({ estatus: "Documentado", ...inputsModified, paquetes: packages })
+      .update({
+        estatus: "Documentado",
+        ...inputsModified,
+        paquetes: packages,
+        eventos: tempArray,
+      })
       .then(async () => {
         setPackages([]);
         setStep(0);
@@ -152,38 +162,14 @@ const AdminForm = ({
       <Form layout="vertical">
         {step === 0 ? (
           <>
-            <Item
-              name="planta"
-              value={inputsModified.planta}
-              label={<Text strong>Planta</Text>}
-              rules={[{ required: true, message: "Ingrese Planta" }]}
-            >
-              <Select
-                placeholder="Nombre de Planta"
-                showSearch
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-                size="large"
-                onChange={(value) =>
-                  setInputsModified({
-                    ...inputsModified,
-                    planta: value,
-                  })
-                }
-              >
-                {plantas &&
-                  plantas.map((data) => (
-                    <Option key={data.id} value={data.id} label={data.planta}>
-                      {data.planta}
-                    </Option>
-                  ))}
-              </Select>
-            </Item>
+            <Text style={{ fontWeight: "700" }}>
+              {editingLocation?.nombreDestinatario}
+            </Text>
+            <br />
+            <Text>{editingLocation?.dDireccion}</Text>
             <Item
               name="tipoDeServicio"
+              style={{ marginTop: 20 }}
               label={<Text strong>Tipo de Servicio</Text>}
               value={inputsModified.tipoDeServicio}
               rules={[{ required: true, message: "Ingrese Tipo de Servicio" }]}
@@ -198,10 +184,13 @@ const AdminForm = ({
                   0
                 }
                 onChange={(value) =>
-                  setInputsModified({
-                    ...inputsModified,
-                    tipoDeServicio: value,
-                  })
+                  setInputsModified(
+                    {
+                      ...inputsModified,
+                      tipoDeServicio: value,
+                    },
+                    setServicio(value)
+                  )
                 }
               >
                 {servicios &&
@@ -212,6 +201,42 @@ const AdminForm = ({
                       label={data.tipoServicio}
                     >
                       {data.tipoServicio}
+                    </Option>
+                  ))}
+              </Select>
+            </Item>
+            <Item
+              name="tipoDeDestino"
+              style={{ marginTop: 20 }}
+              label={<Text strong>Tipo de Destino</Text>}
+              value={inputsModified.tipoDeDestino}
+              rules={[{ required: true, message: "Ingrese Tipo de Destino" }]}
+            >
+              <Select
+                placeholder="Tipo de Destino"
+                size="large"
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+                onChange={(value) =>
+                  setInputsModified({
+                    ...inputsModified,
+                    tipoDeDestino: value,
+                  })
+                }
+              >
+                {servicio &&
+                  serviciosObj[servicio]?.destinos &&
+                  serviciosObj[servicio]?.destinos.map((data) => (
+                    <Option
+                      key={data.destino}
+                      value={data.destino}
+                      label={data.destino}
+                    >
+                      {data.destino}
                     </Option>
                   ))}
               </Select>
@@ -256,9 +281,7 @@ const AdminForm = ({
               size="large"
               onClick={() => setStep(1)}
               disabled={
-                !inputsModified.planta ||
-                !inputsModified.tipoDeServicio ||
-                !inputsModified.importe
+                !inputsModified.tipoDeServicio || !inputsModified.importe
               }
             >
               <Text strong style={{ color: "white" }}>
@@ -431,8 +454,8 @@ const AdminForm = ({
 
 const mapStateToProps = (state) => {
   return {
-    plantas: state.firestore.ordered.Plantas,
     servicios: state.firestore.ordered.Servicios,
+    serviciosObj: state.firestore.data.Servicios,
     paquetes: state.firestore.ordered.Paquetes,
     users: state.firestore.ordered.Users,
     profile: state.firebase.profile,
@@ -455,10 +478,6 @@ export default compose(
       },
       {
         collection: "Servicios",
-        where: [["adminID", "==", props.profile.userID]],
-      },
-      {
-        collection: "Plantas",
         where: [["adminID", "==", props.profile.userID]],
       },
     ];

@@ -19,12 +19,6 @@ const AdminForm = ({
   const onFinish = (values) => {
     const data = values;
     const db = firebase.firestore();
-    db.collection("Guias")
-      .doc(editingLocation.id)
-      .update({ estatus: "Modificando", operator: values.correo })
-      .then(async () => {
-        setShowModal(false);
-      });
   };
 
   const onCancel = () => {

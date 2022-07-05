@@ -15,11 +15,28 @@ const Regresados = ({ guias, profile }) => {
     const db = firebase.firestore();
 
     for (let i = 0; i < selected.length; i++) {
+      let info = null;
       db.collection("Guias")
         .doc(selected[i])
-        .update({ estatus: "Documentado" })
-        .then(async () => {
-          setSelected([]);
+        .get()
+        .then((doc) => {
+          info = doc.data();
+          const tempArray = info.eventos;
+
+          tempArray.push({
+            statusid: 3,
+            status: "Documentado",
+            fecha: new Date(),
+          });
+          db.collection("Guias")
+            .doc(selected[i])
+            .update({
+              estatus: "Documentado",
+              eventos: tempArray,
+            })
+            .then(async () => {
+              setSelected([]);
+            });
         });
     }
   };

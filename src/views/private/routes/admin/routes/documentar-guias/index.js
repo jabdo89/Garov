@@ -100,7 +100,9 @@ const Orders = ({ guias, profile }) => {
     return <Spin size="large" style={{ padding: 200 }} />;
   }
 
-  let guiasFiltered = guias;
+  let guiasFiltered = guias
+    .slice()
+    .sort((a, b) => b.fechaCreado - a.fechaCreado);
 
   if (search !== "") {
     guiasFiltered = guiasFiltered.filter((guia) => {

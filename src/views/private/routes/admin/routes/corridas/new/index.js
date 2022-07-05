@@ -84,10 +84,25 @@ const NewCorrida = ({
       })
       .then(() => {
         for (let i = 0; i < guiasArray.length; i++) {
+          let info = null;
           db.collection("Guias")
             .doc(guiasArray[i])
-            .update({
-              estatus: "En Corrida",
+            .get()
+            .then((doc) => {
+              info = doc.data();
+              const tempArray = info.eventos;
+
+              tempArray.push({
+                statusid: 4,
+                status: "En Corrida",
+                fecha: new Date(),
+              });
+              db.collection("Guias")
+                .doc(guiasArray[i])
+                .update({
+                  estatus: "En Corrida",
+                  eventos: tempArray,
+                });
             });
         }
         history.push("/corridas/all");
@@ -261,11 +276,7 @@ const NewCorrida = ({
               <Row>
                 <Item
                   label={<Text strong>Num Corrida</Text>}
-                  name="numCorrida"
                   style={{ width: "20%" }}
-                  rules={[
-                    { required: true, message: "Ingresa numero de corrida" },
-                  ]}
                 >
                   <Text>{numCorrida}</Text>
                 </Item>

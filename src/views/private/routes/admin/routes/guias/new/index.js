@@ -37,20 +37,14 @@ const NewGuia = ({
   sucursales,
   sucursalesObj,
 }) => {
-  const idGuia = shortid.generate();
-
   const [socio, setSocio] = useState(null);
   const [clienteFinal, setClienteFinal] = useState(null);
+
   const [planta, setPlanta] = useState(null);
+  const [sucursal, setSucursal] = useState(null);
 
   const onFinish = (values) => {
-    const data = values;
-    ["fechaEmbarque", "fechaCompromiso", "estatus"].forEach(
-      (e) => delete data[e]
-    );
     const db = firebase.firestore();
-    const fechaEmbarque = moment(values.fechaEmbarque).valueOf();
-    const fechaCompromiso = moment(values.fechaCompromiso).valueOf();
     const id = uuidv4();
     db.collection("Guias")
       .doc(id)
@@ -176,6 +170,13 @@ const NewGuia = ({
                     placeholder="Planta"
                     size="large"
                     onChange={(value) => setPlanta(value)}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
                   >
                     {plantas &&
                       plantas.map((data) => {
@@ -230,30 +231,35 @@ const NewGuia = ({
               <Row>
                 <Item
                   label={<Text strong>Sucursal Orgien</Text>}
-                  name="planta"
+                  name="sucursal"
                   style={{ width: "47%" }}
                   rules={[
-                    { required: true, message: "Ingresa nombre de Cliente" },
+                    { required: true, message: "Ingresa nombre de Sucursal" },
                   ]}
                 >
                   <Select
-                    placeholder="Planta"
+                    placeholder="Sucursal"
                     size="large"
-                    onChange={(value) => setPlanta(value)}
+                    onChange={(value) => setSucursal(value)}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
                   >
-                    {plantas &&
-                      plantas.map((data) => {
-                        if (data.clienteFinal === clienteFinal) {
-                          return (
-                            <Option
-                              key={data.id}
-                              value={data.id}
-                              label={data.planta}
-                            >
-                              {data.planta}
-                            </Option>
-                          );
-                        }
+                    {sucursales &&
+                      sucursales.map((data) => {
+                        return (
+                          <Option
+                            key={data.id}
+                            value={data.id}
+                            label={data.sucursal}
+                          >
+                            {data.sucursal}
+                          </Option>
+                        );
                       })}
                   </Select>
                 </Item>
@@ -262,7 +268,9 @@ const NewGuia = ({
                   name="dDireccion"
                   style={{ width: "47%" }}
                 >
-                  <Text> {plantasObj && plantasObj[planta]?.Dirrecion}</Text>
+                  <Text>
+                    {sucursalesObj && sucursalesObj[sucursal]?.Direccion}
+                  </Text>
                 </Item>
               </Row>
               <Row>
@@ -270,25 +278,25 @@ const NewGuia = ({
                   label={<Text strong>Municipio Origen</Text>}
                   style={{ width: "20%" }}
                 >
-                  <Text> {plantasObj && plantasObj[planta]?.municipio}</Text>
+                  <Text>
+                    {sucursalesObj && sucursalesObj[sucursal]?.municipio}
+                  </Text>
                 </Item>
                 <Item
                   label={<Text strong>Codigo Postal Origen</Text>}
                   style={{ width: "20%" }}
                 >
-                  <Text> {plantasObj && plantasObj[planta]?.codigoPostal}</Text>
+                  <Text>
+                    {sucursalesObj && sucursalesObj[sucursal]?.codigoPostal}
+                  </Text>
                 </Item>
                 <Item
                   label={<Text strong>Estado Origen</Text>}
                   style={{ width: "20%" }}
                 >
-                  <Text> {plantasObj && plantasObj[planta]?.estado}</Text>
-                </Item>
-                <Item
-                  label={<Text strong>Telefono Origen</Text>}
-                  style={{ width: "20%" }}
-                >
-                  <Text> {plantasObj && plantasObj[planta]?.telefono}</Text>
+                  <Text>
+                    {sucursalesObj && sucursalesObj[sucursal]?.estado}
+                  </Text>
                 </Item>
               </Row>
             </Col>
@@ -296,40 +304,6 @@ const NewGuia = ({
               <Text strong>Mas Informacion</Text>
             </Divider>
             <Col>
-              <Row>
-                <Item
-                  label={<Text strong>Largo</Text>}
-                  name="largo"
-                  style={{ width: "20%" }}
-                  rules={[{ required: true, message: "Ingresa lo Largo" }]}
-                >
-                  <Input placeholder="Largo" size="large" />
-                </Item>
-                <Item
-                  name="ancho"
-                  label={<Text strong>Ancho</Text>}
-                  style={{ width: "20%" }}
-                  rules={[{ required: true, message: "Ingrese lo Ancho" }]}
-                >
-                  <Input placeholder="Ancho" size="large" />
-                </Item>
-                <Item
-                  name="alto"
-                  label={<Text strong>Alto</Text>}
-                  rules={[{ required: true, message: "Ingrese lo Alto" }]}
-                  style={{ width: "20%" }}
-                >
-                  <Input placeholder="Alto" size="large" />
-                </Item>
-                <Item
-                  name="peso"
-                  label={<Text strong>Peso</Text>}
-                  rules={[{ required: true, message: "Ingrese el Peso" }]}
-                  style={{ width: "20%" }}
-                >
-                  <Input placeholder="Peso" size="large" />
-                </Item>
-              </Row>
               <Row>
                 <Item
                   label={<Text strong>Valor Declarado</Text>}
@@ -359,7 +333,14 @@ const NewGuia = ({
                 >
                   <Input placeholder="Cantidad Paquetes" size="large" />
                 </Item>
-                <div style={{ width: "20%" }} />
+                <Item
+                  name="peso"
+                  label={<Text strong>Peso</Text>}
+                  rules={[{ required: true, message: "Ingrese el Peso" }]}
+                  style={{ width: "20%" }}
+                >
+                  <Input placeholder="Peso" size="large" />
+                </Item>
               </Row>
             </Col>
 

@@ -33,7 +33,7 @@ const Clientes = ({ clientes }) => {
       title: "Clientes Finales",
       dataIndex: "clientes",
       key: "clientes",
-      render: (clientes) => clientes.length,
+      render: (clientes) => clientes?.length,
     },
     {
       title: "Razon Social",

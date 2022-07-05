@@ -79,11 +79,11 @@ const Corridas = ({ corridas, operadores }) => {
   if (!corridas) {
     return <Spin size="large" style={{ padding: 200 }} />;
   }
-  let corridasFiltered = corridas;
+  let corridasFiltered = corridas.slice().sort((a, b) => b.fecha - a.fecha);
 
   if (search !== "") {
     corridasFiltered = corridasFiltered.filter((corrida) => {
-      return corrida.numCorrida.includes(search);
+      return corrida.id.includes(search);
     });
   }
 

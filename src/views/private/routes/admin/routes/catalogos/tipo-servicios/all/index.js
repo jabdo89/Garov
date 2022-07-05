@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import shortid from "shortid";
-import { FileImageOutlined } from "@ant-design/icons";
-import { Table, Tag, Tooltip, Button } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Table, Tooltip, Button } from "antd";
 import Title from "./table-title";
+import Modal from "./components/edit-modal";
 import { Container } from "./elements";
 
 const Servicios = ({ servicios }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [editingLocation, setEditingLocation] = useState(undefined);
+
   const columns = [
     {
       title: "Tipo de Servicio",
@@ -20,6 +23,25 @@ const Servicios = ({ servicios }) => {
       dataIndex: "destinos",
       key: "destinos",
       render: (destinos) => destinos.length,
+    },
+    {
+      title: "Editar",
+      key: "action",
+      // eslint-disable-next-line react/prop-types
+      render: (row) => (
+        <Tooltip title="Editar">
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            shape="circle"
+            style={{ marginRight: 10 }}
+            onClick={() => {
+              setEditingLocation(row);
+              setShowModal(true);
+            }}
+          />
+        </Tooltip>
+      ),
     },
   ];
 
@@ -36,6 +58,12 @@ const Servicios = ({ servicios }) => {
           ...service,
         }))}
         columns={columns}
+      />
+      <Modal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        editingLocation={editingLocation}
+        setEditingLocation={setEditingLocation}
       />
     </Container>
   );

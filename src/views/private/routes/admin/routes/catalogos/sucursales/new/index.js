@@ -9,10 +9,6 @@ import {
   Button,
   Typography,
   Select,
-  Radio,
-  Table,
-  Tag,
-  Tooltip,
 } from "antd";
 import shortid from "shortid";
 import firebase from "firebase";
@@ -76,7 +72,7 @@ const NewGuia = ({ history, profile }) => {
                 <Item
                   label={<Text strong>Nombre de Sucursal</Text>}
                   name="sucursal"
-                  style={{ width: "30%" }}
+                  style={{ width: "48%" }}
                   rules={[
                     { required: true, message: "Ingresa nombre de Sucursal" },
                   ]}
@@ -86,7 +82,7 @@ const NewGuia = ({ history, profile }) => {
                 <Item
                   label={<Text strong>Ship Branch</Text>}
                   name="shipBranch"
-                  style={{ width: "30%" }}
+                  style={{ width: "48%" }}
                   rules={[
                     {
                       required: true,
@@ -96,10 +92,38 @@ const NewGuia = ({ history, profile }) => {
                 >
                   <Input placeholder="Ship Branch" size="large" />
                 </Item>
+              </Row>
+              <Row>
+                <Item
+                  label={<Text strong>Direccion</Text>}
+                  name="Direccion"
+                  style={{ width: "23%" }}
+                  rules={[
+                    { required: true, message: "Ingresa Dirrecion de Planta" },
+                  ]}
+                >
+                  <Input placeholder="Direccion de Planta" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Estado</Text>}
+                  name="estado"
+                  style={{ width: "23%" }}
+                  rules={[{ required: true, message: "Ingresa Estado" }]}
+                >
+                  <Input placeholder="Estado" size="large" />
+                </Item>
+                <Item
+                  label={<Text strong>Municipio</Text>}
+                  name="municipio"
+                  style={{ width: "23%" }}
+                  rules={[{ required: true, message: "Ingresa Municipio" }]}
+                >
+                  <Input placeholder="Municipio" size="large" />
+                </Item>
                 <Item
                   label={<Text strong>Codigo Postal</Text>}
                   name="codigoPostal"
-                  style={{ width: "30%" }}
+                  style={{ width: "23%" }}
                   rules={[{ required: true, message: "Ingresa Codigo Postal" }]}
                 >
                   <Input placeholder="Codigo Postal" size="large" />

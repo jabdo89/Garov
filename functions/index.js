@@ -29,7 +29,6 @@ exports.grainger = functions.https.onRequest((request, response) => {
         adminID: "11K2Fd6xULgOUCE7GIyfbeGmRW62",
         clienteID: "w0kxnLOxRSUQb9gMcq7xI5FejcO2",
         fechaCreado: new Date(),
-        // Change DB "dirrecion" -> "rDireccion" "dDireccion
 
         // R
         nombreRemitente:
@@ -187,25 +186,11 @@ exports.grainger = functions.https.onRequest((request, response) => {
           request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
             "nFactura"
           ]["#text"],
-        numCliente: "432",
 
         // Internal
         //Todo esto Pendiente (Preguntar a Blanca)
         estatus: "Creado",
-        tipoServicio: "prueba",
-        tipoSucursal: "prueba",
-        planta: "prueba",
-        preguia: "4",
-        shipBranch: "4",
-        numGuia: "5432",
-        numOrden: "432",
-        importe: "4",
-        comision: "4",
-        costoEstadias: "4",
-        costoFletes: "4",
-        costoReparto: "4",
-        costoTotal: "4",
-        costosManiobras: "4",
+        eventos: [{ statusid: 1, status: "Creado", fecha: new Date() }],
       })
       .then(() => {
         response
@@ -429,7 +414,7 @@ exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
       .where(
         "delivery",
         "==",
-        request.body["soapenv:Envelope"]["soapenv:Body"]["urn:cancelarGuia"][
+        request.body["soapenv:Envelope"]["soapenv:Body"]["urn:CancelarGuia"][
           "delivery"
         ]["#text"]
       )

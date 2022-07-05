@@ -155,14 +155,14 @@ const NewPlanta = ({
             <Col>
               <Row>
                 <Item
-                  label={<Text strong>Dirrecion</Text>}
-                  name="Dirrecion"
+                  label={<Text strong>Direccion</Text>}
+                  name="Direccion"
                   style={{ width: "23%" }}
                   rules={[
                     { required: true, message: "Ingresa Dirrecion de Planta" },
                   ]}
                 >
-                  <Input placeholder="Dirrecion de Planta" size="large" />
+                  <Input placeholder="Direccion de Planta" size="large" />
                 </Item>
                 <Item
                   label={<Text strong>Estado</Text>}
@@ -187,46 +187,6 @@ const NewPlanta = ({
                   rules={[{ required: true, message: "Ingresa Codigo Postal" }]}
                 >
                   <Input placeholder="Codigo Postal" size="large" />
-                </Item>
-              </Row>
-              <Row>
-                <Item
-                  label={<Text strong>Tipo de Servicio Prefereido</Text>}
-                  name="servicioPreferido"
-                  style={{ width: "47%" }}
-                  rules={[{ required: true, message: "Ingresa Servicio" }]}
-                >
-                  <Select placeholder="Servicio" size="large">
-                    {servicios &&
-                      servicios.map((data) => (
-                        <Option
-                          key={data.id}
-                          value={data.id}
-                          label={data.tipoServicio}
-                        >
-                          {data.tipoServicio}
-                        </Option>
-                      ))}
-                  </Select>
-                </Item>
-                <Item
-                  label={<Text strong>Tipo de Unidad Prefereida</Text>}
-                  name="unidadPreferida"
-                  style={{ width: "47%" }}
-                  rules={[{ required: true, message: "Ingresa Unidad" }]}
-                >
-                  <Select placeholder="Unidad" size="large">
-                    {unidades &&
-                      unidades.map((data) => (
-                        <Option
-                          key={data.id}
-                          value={data.id}
-                          label={data.tipoUnidad}
-                        >
-                          {data.tipoUnidad}
-                        </Option>
-                      ))}
-                  </Select>
                 </Item>
               </Row>
               <Divider style={{ borderTop: "grey" }} orientation="right">
