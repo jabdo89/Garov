@@ -90,7 +90,7 @@ const NewCorrida = ({
             .get()
             .then((doc) => {
               info = doc.data();
-              const tempArray = info.eventos;
+              const tempArray = [...info.eventos];
 
               tempArray.push({
                 statusid: 4,

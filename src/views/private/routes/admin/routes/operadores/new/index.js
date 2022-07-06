@@ -28,6 +28,7 @@ const { Title, Paragraph, Text } = Typography;
 const { Password } = Input;
 
 const NewOperador = ({ history, profile }) => {
+  console.log(history);
   const onFinish = (values) => {
     const secondAuth = firebase.initializeApp(secondConfig, "Secondary");
     const db = firebase.firestore();

@@ -186,7 +186,10 @@ exports.grainger = functions.https.onRequest((request, response) => {
           request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
             "nFactura"
           ]["#text"],
-
+        nOrden:
+          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
+            "nOrden"
+          ]["#text"],
         // Internal
         //Todo esto Pendiente (Preguntar a Blanca)
         estatus: "Creado",
@@ -380,6 +383,10 @@ exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
         nFactura:
           request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
             "nFactura"
+          ]["#text"],
+        nOrden:
+          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
+            "nOrden"
           ]["#text"],
 
         // Internal

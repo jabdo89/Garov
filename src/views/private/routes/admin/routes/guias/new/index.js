@@ -42,17 +42,60 @@ const NewGuia = ({
 
   const [planta, setPlanta] = useState(null);
   const [sucursal, setSucursal] = useState(null);
-
+  console.log(history);
   const onFinish = (values) => {
+    console.log(values);
     const db = firebase.firestore();
     const id = uuidv4();
     db.collection("Guias")
       .doc(id)
       .set({
+        // Interno
         id,
         adminID: profile.userID,
-        clienteID: "pendiente",
+        clienteID: values.cliente,
         fechaCreado: new Date(),
+        // Origen
+        nombreRemitente: clientesObj[values.cliente].socio,
+        rPais: "MX",
+        rEstado: sucursalesObj[sucursal]?.estado,
+        rMunicipio: sucursalesObj[sucursal]?.municipio,
+        rCiudad: null,
+        rDireccion: sucursalesObj[sucursal]?.Direccion,
+        rColonia: null,
+        rCodigoPostal: sucursalesObj[sucursal]?.codigoPostal,
+        rTelefono: null,
+        rTelefonoMovil: null,
+        rCorreoElectronico: null,
+        //Destino
+        nombreDestinatario: values.clienteFinal,
+        dPais: "MX",
+        dEstado: plantasObj[planta]?.estado,
+        dMunicipio: plantasObj[planta]?.municipio,
+        dCiudad: null,
+        dDireccion: plantasObj[planta]?.Dirrecion,
+        dColonia: null,
+        dCodigoPostal: plantasObj[planta]?.codigoPostal,
+        dTelefono: plantasObj[planta]?.telefono,
+        dTelefonoMovil: null,
+        dCorreoElectronico: null,
+        dNotas: values.notas ? values.notas : null,
+        // Otros
+        valorDeclarado: values.valorDeclarado,
+        contenido: values.contenido,
+        largo: null,
+        ancho: null,
+        alto: null,
+        peso: values.peso,
+        cantidadPqte: values.cantidadPqte,
+        delivery: values.delivery,
+        nFactura: values.nFactura,
+        nOrden: values.nOrden,
+        estatus: "Escaneado",
+        eventos: [
+          { statusid: 1, status: "Creado", fecha: new Date() },
+          { statusid: 2, status: "Escaneado", fecha: new Date() },
+        ],
       })
       .then(async () => {
         history.push("/guias/all");
@@ -79,7 +122,7 @@ const NewGuia = ({
         <Card>
           <Title level={4}>Añade los datos de tu nueva Guía</Title>
           <Form layout="vertical" onFinish={onFinish}>
-            <Divider style={{ borderTop: "grey" }} orientation="right">
+            <Divider style={{ color: "lightgray" }} orientation="right">
               <Text strong>Captura de informacion</Text>
             </Divider>
             <Col>
@@ -108,7 +151,7 @@ const NewGuia = ({
                   </Select>
                 </Item>
                 <Item
-                  name="Cliente Final"
+                  name="clienteFinal"
                   label={<Text strong>Cliente Final</Text>}
                   style={{ width: "20%" }}
                   rules={[
@@ -157,6 +200,9 @@ const NewGuia = ({
                   <Input placeholder="Factura" size="large" />
                 </Item>
               </Row>
+              <Divider style={{ color: "lightgray" }} orientation="right">
+                <Text strong>Destino</Text>
+              </Divider>
               <Row>
                 <Item
                   label={<Text strong>Planta Destino</Text>}
@@ -228,6 +274,9 @@ const NewGuia = ({
                   <Text> {plantasObj && plantasObj[planta]?.telefono}</Text>
                 </Item>
               </Row>
+              <Divider style={{ color: "lightgray" }} orientation="right">
+                <Text strong>Origen</Text>
+              </Divider>
               <Row>
                 <Item
                   label={<Text strong>Sucursal Orgien</Text>}
@@ -300,7 +349,7 @@ const NewGuia = ({
                 </Item>
               </Row>
             </Col>
-            <Divider style={{ borderTop: "grey" }} orientation="right">
+            <Divider style={{ color: "lightgray" }} orientation="right">
               <Text strong>Mas Informacion</Text>
             </Divider>
             <Col>
@@ -340,6 +389,26 @@ const NewGuia = ({
                   style={{ width: "20%" }}
                 >
                   <Input placeholder="Peso" size="large" />
+                </Item>
+              </Row>
+              <Row>
+                <Item
+                  label={<Text strong># Orden</Text>}
+                  name="nOrden"
+                  style={{ width: "47%" }}
+                  rules={[
+                    { required: true, message: "Ingresa Numero de Orden" },
+                  ]}
+                >
+                  <Input placeholder="Orden" size="large" />
+                </Item>
+                <Item
+                  name="notas"
+                  label={<Text strong>Notas</Text>}
+                  style={{ width: "47%" }}
+                  rules={[{ message: "Ingrese Notas de Entrega" }]}
+                >
+                  <Input placeholder="Contenido" size="large" />
                 </Item>
               </Row>
             </Col>
@@ -391,5 +460,6 @@ export default compose(
         where: [["adminID", "==", props.profile.userID]],
       },
     ];
-  })
+  }),
+  withRouter
 )(NewGuia);

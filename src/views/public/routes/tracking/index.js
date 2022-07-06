@@ -3,8 +3,8 @@ import { Input, Button, Typography, message } from "antd";
 import PublicLayout from "../../../../layouts/public";
 import moment from "moment";
 import firebase from "firebase";
-import { useFirebase } from "react-redux-firebase";
 import { ElementsContainer, Menu } from "./elements";
+import Modal from "./components/history-modal";
 import useQueryParam from "./hooks";
 
 const { Title, Paragraph } = Typography;
@@ -16,8 +16,8 @@ const Tracking = () => {
   const [locationTrackerRef, setLocationTrackerRef] = useState();
   const [deliveryData, setDeliveryData] = useState();
   const [serviceData, setServiceData] = useState();
-  const [deliveryIndex, setDeliveryIndex] = useState();
-  console.log(service);
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     let temp;
     if (service) {
@@ -40,7 +40,7 @@ const Tracking = () => {
         });
     }
   }, []);
-  console.log(locationTrackerRef);
+
   useEffect(() => {
     if (locationTrackerRef) {
       firebase
@@ -97,10 +97,20 @@ const Tracking = () => {
     }
   };
 
-  if (serviceData && deliveryIndex) {
-    console.log(serviceData.deliveries[deliveryIndex].location.lat);
-  }
-  console.log(deliveryData);
+  const messageSatus = (data) => {
+    if (data === "Creado" || data === "Escaneado" || data === "Documentado") {
+      return "Tu entrega esta siendo procesada";
+    } else if (data === "En Corrida") {
+      return "Tu entrega esta en camino";
+    } else if (data === "Entregado") {
+      return "Tu entrega esta entregada";
+    } else if (data === "Regresado") {
+      return "Tu entrega se intento entregar";
+    } else {
+      return null;
+    }
+  };
+
   return (
     <PublicLayout>
       <ElementsContainer
@@ -128,15 +138,34 @@ const Tracking = () => {
                 Reset
               </Button>
               <Paragraph strong style={{ margin: 0 }}>
+                Estatus
+              </Paragraph>
+              <Paragraph>{locationData.estatus}</Paragraph>
+              <Paragraph>{messageSatus(locationData.estatus)}</Paragraph>
+              <Paragraph strong style={{ margin: 0 }}>
                 Última actualización
               </Paragraph>
-              <Paragraph>{moment(new Date()).format("lll")}</Paragraph>
+              <Paragraph>
+                {moment(
+                  locationData?.eventos[locationData.eventos.length - 1].fecha
+                    .seconds * 1000
+                ).format("lll")}
+              </Paragraph>
               <Paragraph strong style={{ margin: 0 }}>
                 Info de Pedido
               </Paragraph>
               <Paragraph>{locationData.nombreDestinatario}</Paragraph>
-              <Paragraph>{locationData.dDireccion}</Paragraph>
-              <Paragraph>{locationData.estatus}</Paragraph>
+              <Paragraph style={{ width: 300 }}>
+                {locationData.dDireccion}
+              </Paragraph>
+              <Button outline onClick={() => setShowModal(true)}>
+                Ver Historial de paquete
+              </Button>
+              <Modal
+                showModal={showModal}
+                setShowModal={setShowModal}
+                eventos={locationData.eventos}
+              />
             </>
           )}
         </Menu>

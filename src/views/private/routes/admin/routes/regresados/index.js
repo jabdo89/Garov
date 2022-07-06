@@ -21,7 +21,7 @@ const Regresados = ({ guias, profile }) => {
         .get()
         .then((doc) => {
           info = doc.data();
-          const tempArray = info.eventos;
+          const tempArray = [...info.eventos];
 
           tempArray.push({
             statusid: 3,

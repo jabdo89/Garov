@@ -55,7 +55,7 @@ const AdminForm = ({
   //Functions
   const onFinish = () => {
     const db = firebase.firestore();
-    const tempArray = editingLocation.eventos;
+    const tempArray = [...editingLocation.eventos];
     tempArray.push({ statusid: 3, status: "Documentado", fecha: new Date() });
     db.collection("Guias")
       .doc(editingLocation.id)
