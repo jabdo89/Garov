@@ -20,12 +20,7 @@ import {
 } from "antd";
 import shortid from "shortid";
 import GuiasModal from "./components/modal";
-import {
-  HomeOutlined,
-  UserOutlined,
-  MailOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Container, Row, Col } from "./elements";
@@ -176,7 +171,7 @@ const NewCorrida = ({
       ),
     },
   ];
-
+  console.log(addingGuias);
   return (
     <>
       <Container>
@@ -293,6 +288,21 @@ const NewCorrida = ({
                   <Text>{unidadesFields.polizaSeguro}</Text>
                 </Item>
               </Row>
+              <Row>
+                <Item
+                  label={<Text strong>Km Inicial</Text>}
+                  name="kmInicial"
+                  style={{ width: "47%" }}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Ingresa el Kilometraje Inicial",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Km" size="large" />
+                </Item>
+              </Row>
             </Col>
             <Divider style={{ borderTop: "grey" }} orientation="right">
               <Text strong>Guias</Text>
@@ -325,6 +335,7 @@ const NewCorrida = ({
                 style={{ marginLeft: "auto", display: "block" }}
                 type="primary"
                 htmlType="submit"
+                disabled={addingGuias.length === 0}
               >
                 Crear
               </Button>

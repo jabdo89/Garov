@@ -4,17 +4,23 @@ import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import shortid from "shortid";
 import moment from "moment";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, ScheduleOutlined } from "@ant-design/icons";
 import { Table, Spin, Tag, Button, Tooltip } from "antd";
 import Title from "./table-title";
 import { Container } from "./elements";
 import Modal from "./components/detail-modal";
+import ModalKM from "./components/kmFinal-modal";
 
 const Corridas = ({ corridas, operadores }) => {
   const [search, setSearch] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [editingLocation, setEditingLocation] = useState(undefined);
+
+  const [showKmFinalModal, setShowKmFinalModal] = useState(false);
+  const [editingLocationKmFinal, setEditingLocationKmFinal] = useState(
+    undefined
+  );
 
   if (!operadores) {
     return <Spin size="large" style={{ padding: 200 }} />;
@@ -46,6 +52,16 @@ const Corridas = ({ corridas, operadores }) => {
       render: (guiasList) => guiasList.length,
     },
     {
+      title: "Km Inicial",
+      key: "kmInicial",
+      dataIndex: "kmInicial",
+    },
+    {
+      title: "Km Final",
+      key: "kmFinal",
+      dataIndex: "kmFinal",
+    },
+    {
       title: "Estatus",
       key: "estatus",
       dataIndex: "estatus",
@@ -56,22 +72,38 @@ const Corridas = ({ corridas, operadores }) => {
       ),
     },
     {
-      title: "Detalle",
+      title: "Acciones",
       key: "action",
       // eslint-disable-next-line react/prop-types
       render: (row) => (
-        <Tooltip title="Detalle">
-          <Button
-            type="primary"
-            icon={<InfoCircleOutlined />}
-            shape="circle"
-            style={{ marginRight: 10 }}
-            onClick={() => {
-              setEditingLocation(row);
-              setShowModal(true);
-            }}
-          />
-        </Tooltip>
+        <>
+          <Tooltip title="Detalle">
+            <Button
+              type="primary"
+              icon={<InfoCircleOutlined />}
+              shape="circle"
+              style={{ marginRight: 10 }}
+              onClick={() => {
+                setEditingLocation(row);
+                setShowModal(true);
+              }}
+            />
+          </Tooltip>
+          {row.estatus === "Completado" && !row.kmFinal && (
+            <Tooltip title="Km Final">
+              <Button
+                type="secondary"
+                icon={<ScheduleOutlined />}
+                shape="circle"
+                style={{ marginRight: 10 }}
+                onClick={() => {
+                  setEditingLocationKmFinal(row);
+                  setShowKmFinalModal(true);
+                }}
+              />
+            </Tooltip>
+          )}
+        </>
       ),
     },
   ];
@@ -108,6 +140,13 @@ const Corridas = ({ corridas, operadores }) => {
         setShowModal={setShowModal}
         editingLocation={editingLocation}
         setEditingLocation={setEditingLocation}
+      />
+      <ModalKM
+        showModal={showKmFinalModal}
+        setShowModal={setShowKmFinalModal}
+        editingLocation={editingLocationKmFinal}
+        setEditingLocation={setEditingLocationKmFinal}
+        operadores={operadores}
       />
     </Container>
   );

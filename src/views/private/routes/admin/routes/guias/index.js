@@ -146,9 +146,8 @@ const Orders = ({ history, profile }) => {
     },
     {
       title: "# Orden",
-      dataIndex: "id",
-      key: "id",
-      render: (id) => id.substring(0, 6),
+      dataIndex: "nOrden",
+      key: "nOrden",
     },
     {
       title: "Numero de Factura",

@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import { Form, Modal, Table, Typography, Button, Input, Select } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Form, Modal, Table, Typography, Button, Input, Tooltip } from "antd";
+import { ArrowLeftOutlined, DeleteOutlined } from "@ant-design/icons";
 import firebase from "firebase";
 
-const { Option } = Select;
 const { Item } = Form;
 const { Text } = Typography;
 const { Title } = Typography;
@@ -16,19 +15,18 @@ const AdminForm = ({
   setShowModal,
   editingLocation,
   setEditingLocation,
-  unidades,
   services,
 }) => {
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
   //Functions
-  console.log(services);
+  const db = firebase.firestore();
+
   const onFinish = (values) => {
     if (editingLocation?.destinos.some((e) => e.destino === values.destino)) {
       setError("Destino ya Existe");
       return;
     }
-    const db = firebase.firestore();
     let array = [...editingLocation?.destinos, values];
 
     db.collection("Servicios")
@@ -69,6 +67,32 @@ const AdminForm = ({
       title: "Comision",
       dataIndex: "comision",
       key: "comision",
+    },
+    {
+      title: "Borrar",
+      key: "action",
+      // eslint-disable-next-line react/prop-types
+      render: (row) => (
+        <Tooltip title="Administrar">
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
+            shape="circle"
+            style={{ marginRight: 10 }}
+            onClick={() => {
+              let newDestinos = editingLocation.destinos.filter(function(
+                value
+              ) {
+                return value.destino !== row.destino;
+              });
+              db.collection("Servicios")
+                .doc(editingLocation.id)
+                .update({ destinos: newDestinos })
+                .then(() => setShowModal(false));
+            }}
+          />
+        </Tooltip>
+      ),
     },
   ];
 
@@ -130,28 +154,6 @@ const AdminForm = ({
         />
       ) : (
         <Form onFinish={onFinish}>
-          <Item
-            label={<Text strong>Tipo Unidad</Text>}
-            name="tipoUnidad"
-            rules={[{ required: true, message: "Ingrese Tipo de Unidad" }]}
-          >
-            <Select
-              showSearch
-              size="large"
-              placeholder="Tipo de Unidad"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {unidades &&
-                unidades.map((data) => (
-                  <Option key={data.id} value={data.id} label={data.tipoUnidad}>
-                    {data.tipoUnidad}
-                  </Option>
-                ))}
-            </Select>
-          </Item>
           <Item
             name="destino"
             label={<Text strong>Destino</Text>}

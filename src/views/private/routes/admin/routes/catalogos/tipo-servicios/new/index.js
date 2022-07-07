@@ -59,12 +59,6 @@ const NewTipoServicio = ({ history, unidades, profile }) => {
       ),
     },
     {
-      title: "Unidad",
-      dataIndex: "tipoUnidad",
-      key: "tipoUnidad",
-      render: (unidad) => unidades[unidad].tipoUnidad,
-    },
-    {
       title: "Costo",
       dataIndex: "costo",
       key: "costo",
@@ -86,12 +80,12 @@ const NewTipoServicio = ({ history, unidades, profile }) => {
             icon={<DeleteOutlined />}
             shape="circle"
             style={{ marginRight: 10 }}
-            // onClick={() => {
-            //   var newArray = addingGuias.filter(function(value) {
-            //     return value.numOrden !== row.numOrden;
-            //   });
-            //   setAddingGuias(newArray);
-            // }}
+            onClick={() => {
+              let newDestinos = destinos.filter(function(value) {
+                return value.destino !== row.destino;
+              });
+              setDestinos(newDestinos);
+            }}
           />
         </Tooltip>
       ),

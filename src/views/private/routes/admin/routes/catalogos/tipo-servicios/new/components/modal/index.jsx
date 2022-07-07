@@ -8,16 +8,9 @@ const { Option } = Select;
 const { Item } = Form;
 const { Text } = Typography;
 
-const DestinosModal = ({
-  showModal,
-  setShowModal,
-  setDestinos,
-  destinos,
-  unidades,
-}) => {
+const DestinosModal = ({ showModal, setShowModal, setDestinos, destinos }) => {
   // Form Info
   const [inputsModified, setInputsModified] = useState({
-    tipoUnidad: null,
     destino: null,
     costo: null,
     comision: null,
@@ -30,7 +23,6 @@ const DestinosModal = ({
   const addDestino = () => {
     setDestinos([...destinos, inputsModified]);
     setInputsModified({
-      tipoUnidad: null,
       destino: null,
       costo: null,
       comision: null,
@@ -52,30 +44,6 @@ const DestinosModal = ({
       width="50%"
     >
       <Form>
-        <Item
-          label={<Text strong>Tipo Unidad</Text>}
-          rules={[{ required: true, message: "Ingrese Tipo de Unidad" }]}
-        >
-          <Select
-            showSearch
-            size="large"
-            placeholder="Tipo de Unidad"
-            optionFilterProp="children"
-            onChange={(value) =>
-              setInputsModified({ ...inputsModified, tipoUnidad: value })
-            }
-            filterOption={(input, option) =>
-              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            {unidades &&
-              unidades.map((data) => (
-                <Option key={data.id} value={data.id} label={data.tipoUnidad}>
-                  {data.tipoUnidad}
-                </Option>
-              ))}
-          </Select>
-        </Item>
         <Item
           label={<Text strong>Destino</Text>}
           onChange={(e) =>
@@ -114,7 +82,6 @@ const DestinosModal = ({
           size="large"
           onClick={() => addDestino()}
           disabled={
-            !inputsModified.tipoUnidad ||
             !inputsModified.comision ||
             !inputsModified.costo ||
             !inputsModified.destino
@@ -129,23 +96,4 @@ const DestinosModal = ({
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    unidades: state.firestore.ordered.Unidades,
-    profile: state.firebase.profile,
-  };
-};
-
-export default compose(
-  connect(mapStateToProps),
-  firestoreConnect((props) => {
-    if (props.profile.userID === undefined) return [];
-
-    return [
-      {
-        collection: "Unidades",
-        where: [["adminID", "==", props.profile.userID]],
-      },
-    ];
-  })
-)(DestinosModal);
+export default DestinosModal;
