@@ -415,14 +415,18 @@ exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
 
 exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
   return cors(request, response, async () => {
-    functions.logger.log("Call", request);
+    functions.logger.log("Call", request.body);
+    functions.logger.log(
+      "Call",
+      request.body["soapenv:Envelope"]["soapenv:Body"]
+    );
     await db
       .collection("Guias")
       .where(
         "delivery",
         "==",
         request.body["soapenv:Envelope"]["soapenv:Body"]["urn:CancelarGuia"][
-          "delivery"
+          "nGuia"
         ]["#text"]
       )
       .get()

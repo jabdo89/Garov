@@ -52,6 +52,22 @@ const AdminForm = ({
   });
   const [packages, setPackages] = useState([]);
 
+  const setImporte = (value) => {
+    setInputsModified({
+      ...inputsModified,
+      tipoDeDestino: value,
+    });
+    console.log(value);
+    let importe =
+      serviciosObj &&
+      serviciosObj[servicio]?.destinos?.filter((data) => {
+        console.log(data);
+        return data.destino === value;
+      });
+    console.log(importe);
+    setInputsModified({ ...inputsModified, importe: importe[0].costo });
+  };
+
   //Functions
   const onFinish = () => {
     const db = firebase.firestore();
@@ -221,12 +237,7 @@ const AdminForm = ({
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                onChange={(value) =>
-                  setInputsModified({
-                    ...inputsModified,
-                    tipoDeDestino: value,
-                  })
-                }
+                onChange={(value) => setImporte(value)}
               >
                 {servicio &&
                   serviciosObj[servicio]?.destinos &&
@@ -251,24 +262,8 @@ const AdminForm = ({
                   importe: e.target.value,
                 })
               }
-              rules={[
-                {
-                  pattern: new RegExp(/\$\s?|(,*)/g),
-                  required: true,
-                  message: "Ingresa un valor",
-                },
-              ]}
             >
-              <InputNumber
-                size="large"
-                controls={false}
-                style={{ width: "100%" }}
-                maxLength={18}
-                formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-              />
+              <Text>$ {inputsModified.importe}</Text>
             </Item>
             <Button
               style={{
