@@ -76,7 +76,10 @@ const AdminForm = ({
     db.collection("Guias")
       .doc(editingLocation.id)
       .update({
-        estatus: "Documentado",
+        estatus:
+          editingLocation?.estatus === "En Corrida"
+            ? "En Corrida"
+            : "Documentado",
         ...inputsModified,
         paquetes: packages,
         eventos: tempArray,
@@ -213,7 +216,7 @@ const AdminForm = ({
                   servicios.map((data) => (
                     <Option
                       key={data.id}
-                      value={data.id}
+                      value={data.tipoServicio}
                       label={data.tipoServicio}
                     >
                       {data.tipoServicio}

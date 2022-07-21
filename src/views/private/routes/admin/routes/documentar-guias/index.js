@@ -103,7 +103,9 @@ const Orders = ({ guias, profile }) => {
   let guiasFiltered = guias
     .slice()
     .sort((a, b) => b.fechaCreado - a.fechaCreado);
-
+  guiasFiltered = guiasFiltered.filter((guia) => {
+    return !guia.tipoDeServicio;
+  });
   if (search !== "") {
     guiasFiltered = guiasFiltered.filter((guia) => {
       return guia.delivery.includes(search);
@@ -154,7 +156,7 @@ export default compose(
       {
         collection: "Guias",
         where: [
-          ["estatus", "==", "Escaneado"],
+          ["estatus", "in", ["Escaneado", "En Corrida"]],
           ["adminID", "==", props.profile.userID],
         ],
       },

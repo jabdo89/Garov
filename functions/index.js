@@ -10,211 +10,6 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-exports.grainger = functions.https.onRequest((request, response) => {
-  return cors(request, response, async () => {
-    functions.logger.log("info", request.body);
-    functions.logger.log(
-      "try1",
-      request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-        "dCodigoPostal"
-      ]["#text"]
-    );
-    const id = uuidv4();
-    await db
-      .collection("Guias")
-      .doc(id)
-      .set({
-        // IDs
-        id,
-        adminID: "11K2Fd6xULgOUCE7GIyfbeGmRW62",
-        clienteID: "w0kxnLOxRSUQb9gMcq7xI5FejcO2",
-        fechaCreado: new Date(),
-
-        // R
-        nombreRemitente:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "nombreRemitente"
-          ]["#text"],
-        rPais:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "rPais"
-          ]["#text"],
-        rEstado:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "rEstado"
-          ]["#text"],
-        rMunicipio:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "rMunicipio"
-          ]["#text"],
-        rCiudad:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "rCiudad"
-          ]["#text"],
-        rDireccion:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "rDireccion"
-          ]["#text"],
-        rColonia: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["rColonia"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "rColonia"
-            ]["#text"]
-          : null,
-        rCodigoPostal:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "rCodigoPostal"
-          ]["#text"],
-        rTelefono: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["rTelefono"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "rTelefono"
-            ]["#text"]
-          : null,
-        rTelefonoMovil: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["rTelefonoMovil"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "rTelefonoMovil"
-            ]["#text"]
-          : null,
-        rCorreoElectronico: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["rCorreoElectronico"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "rCorreoElectronico"
-            ]["#text"]
-          : null,
-        // D
-        nombreDestinatario:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "nombreDestinatatio"
-          ]["#text"],
-        dPais:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dPais"
-          ]["#text"],
-        dEstado:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dEstado"
-          ]["#text"],
-        dMunicipio:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dMunicipio"
-          ]["#text"],
-        dCiudad:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dCiudad"
-          ]["#text"],
-        dDireccion:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dDireccion"
-          ]["#text"],
-        dColonia: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["dColonia"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "dColonia"
-            ]["#text"]
-          : null,
-        dCodigoPostal:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dCodigoPostal"
-          ]["#text"],
-        dTelefono: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["dTelefono"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "dTelefono"
-            ]["#text"]
-          : null,
-        dTelefonoMovil: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["dTelefonoMovil"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "dTelefonoMovil"
-            ]["#text"]
-          : null,
-        dCorreoElectronico: request.body["soapenv:Envelope"]["soapenv:Body"][
-          "urn:crearGuia"
-        ]["dCorreoElectronico"]["#text"]
-          ? request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "dCorreoElectronico"
-            ]["#text"]
-          : null,
-        dNotas:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "dNotas"
-          ]["#text"],
-
-        //Other
-        valorDeclarado:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "valorDeclarado"
-          ]["#text"],
-        contenido:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "contenido"
-          ]["#text"],
-        largo:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "largo"
-          ]["#text"],
-        ancho:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "ancho"
-          ]["#text"],
-        alto:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "alto"
-          ]["#text"],
-        peso:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "peso"
-          ]["#text"],
-        cantidadPqte:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "cantidadPqte"
-          ]["#text"],
-        delivery:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "delivery"
-          ]["#text"],
-        nFactura:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "nFactura"
-          ]["#text"],
-        nOrden:
-          request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-            "nOrden"
-          ]["#text"],
-        // Internal
-        //Todo esto Pendiente (Preguntar a Blanca)
-        estatus: "Creado",
-        eventos: [{ statusid: 1, status: "Creado", fecha: new Date() }],
-      })
-      .then(() => {
-        response
-          .status(200)
-          .send(
-            request.body["soapenv:Envelope"]["soapenv:Body"]["urn:crearGuia"][
-              "delivery"
-            ]["#text"]
-          );
-        // Regresar delivery Num
-        return 0;
-      })
-      .catch((err) => {
-        functions.logger.log("error", err);
-        response.status(400).send(err);
-        return 0;
-      });
-    return;
-  });
-});
-
 exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
   return cors(request, response, async () => {
     const id = uuidv4();
@@ -415,10 +210,11 @@ exports.crearGuiaGarov = functions.https.onRequest((request, response) => {
 
 exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
   return cors(request, response, async () => {
-    functions.logger.log("Call", request.body);
     functions.logger.log(
-      "Call",
-      request.body["soapenv:Envelope"]["soapenv:Body"]
+      "delivery",
+      request.body["soapenv:Envelope"]["soapenv:Body"]["urn:CancelarGuia"][
+        "nGuia"
+      ]["#text"]
     );
     await db
       .collection("Guias")
@@ -431,12 +227,24 @@ exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
       )
       .get()
       .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+          functions.logger.log("error", querySnapshot);
+          response.status(400).send("Delivery no existe");
+          return 0;
+        }
         querySnapshot.forEach((doc) => {
+          functions.logger.log("doc", doc.id);
           db.collection("Guias")
             .doc(doc.id)
             .delete()
             .then(() => {
-              response.status(200).send("Guia Cancelada");
+              response.status(200).send({
+                status: "Guia Cancelada",
+                delivery:
+                  request.body["soapenv:Envelope"]["soapenv:Body"][
+                    "urn:CancelarGuia"
+                  ]["nGuia"]["#text"],
+              });
               return 0;
             })
             .catch((err) => {
@@ -445,13 +253,13 @@ exports.cancelarGuiaGarov = functions.https.onRequest((request, response) => {
               return 0;
             });
         });
-      });
-    querySnapshot
-      .empty(() => {
-        response.status(400).send("Delivery no existe");
-        return 0;
+        querySnapshot.empty(() => {
+          response.status(400).send("Delivery no existe");
+          return 0;
+        });
       })
       .catch((error) => {
+        functions.logger.log("error", error);
         response.status(400).send(error);
         return 0;
       });
@@ -475,6 +283,10 @@ exports.trackingGarov = functions.https.onRequest((request, response) => {
       )
       .get()
       .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+          response.status(400).send("Delivery no existe");
+          return 0;
+        }
         querySnapshot.forEach((doc) => {
           info = doc.data();
 
@@ -483,17 +295,11 @@ exports.trackingGarov = functions.https.onRequest((request, response) => {
             .send({ eventos: info.eventos, tracking: "url.com" });
           return 0;
         });
-
-        querySnapshot
-          .empty(() => {
-            response.status(400).send("Delivery no existe");
-            return 0;
-          })
-          .catch((err) => {
-            functions.logger.log("error", err);
-            response.status(400).send(err);
-            return 0;
-          });
+      })
+      .catch((error) => {
+        functions.logger.log("error", error);
+        response.status(400).send(error);
+        return 0;
       });
     return;
   });

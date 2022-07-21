@@ -27,7 +27,9 @@ const GuiaModal = ({
   };
 
   const addGuia = () => {
-    setAddingGuias([...addingGuias, guiasObj[currGuia]]);
+    if (!addingGuias.includes(guiasObj[currGuia])) {
+      setAddingGuias([...addingGuias, guiasObj[currGuia]]);
+    }
     setCurrGuia("");
     setShowModal(false);
   };
@@ -117,7 +119,7 @@ export default compose(
       {
         collection: "Guias",
         where: [
-          ["estatus", "==", "Documentado"],
+          ["estatus", "in", ["Documentado", "Escaneado"]],
           ["adminID", "==", props.profile.userID],
         ],
       },
